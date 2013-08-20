@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Meta Data -->	
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="description" content="description">
+	<meta name="keywords" content="keywords">
+
+	<!-- Cascading Style Sheets -->
+	<link rel="stylesheet" type="text/css" href="css/font.css"  >
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="../resources/css/leaflet.css" />
+
+	<!-- Javascript Includes -->
+	<script type="text/javascript" src="../resources/js/jquery-1.9.1.min.js"></script><style type="text/css"></style>
+	<script type="text/javascript" src="../resources/js/d3.v3.min.js"></script>	
+	<script type="text/javascript" src="../resources/js/leaflet.js"></script>
+	<script type="text/javascript" src="../resources/js/queue.v1.min.js"></script>
+	<script type="text/javascript" src="../resources/js/topojson.v1.min.js"></script>
+	<script type="text/javascript" src="../resources/js/colorbrewer.js"></script>
+
+	<script type="text/javascript" src="../resources/Tangle-0.1.0/Tangle.js"></script>
+
+    <!-- TangleKit (optional) -->
+    <link rel="stylesheet" href="../resources/Tangle-0.1.0/TangleKit/TangleKit.css" type="text/css">
+    <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/mootools.js"></script>
+    <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/sprintf.js"></script>
+    <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/BVTouchable.js"></script>
+    <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/TangleKit.js"></script>
+
+    <script type="text/javascript" src="../data/us-county-names.js"></script>
+	<script type="text/javascript" src="js/tredis.js"></script>
+	<script type="text/javascript" src="js/tangle-legend.js"></script>
+	<title>AVAIL County Trade Visualization</title>
+</head>
+
+<body>
+
+<div id="viz"></div>
+<div id="loading" style="display: none;">loading</div>
+<div id="info"></div>
+<div id="coords"></div>
+
+<div id="hover"></div>
+<div id="legend">
+	<h2><a href="#" class="closed">Legend</a></h2>
+	<div id="legend-detail">
+		<div id="legend-output"></div>
+
+
+		<div id="legend-control">
+			<hr>
+			<button id="legend-plus" value="+ threshold">+ Threshold</button>
+			<button id="legend-minus" value="- threshold">- Threshold</button>
+			<hr>
+			Color Scale : <select id="colorbrews"></select>
+		</div>
+	</div>
+	
+</div>
+<div id="container">
+	
+	<h1>Display Controls</h1>
+	<div id="content">
+		<center>
+		Selected County:<br>
+		<select id='county_select'>
+		</select><br>
+		Commodity:<br>
+		<select id='commodity_select'>
+		<option value="00" selected>All Commodities</option>
+		<option value="01">01 - Live animals/fish</option>
+		<option value="02">02 - Cereal grains</option>
+		<option value="03">03 - Other ag prods.</option>
+		<option value="04">04 - Animal feed</option>
+		<option value="05">05 - Meat/seafood</option>
+		<option value="06">06 - Milled grain prods.</option>
+		<option value="07">07 - Other foodstuffs</option>
+		<option value="08">08 - Alcoholic beverages</option>
+		<option value="09">09 - Tobacco prods.</option>
+		<option value="10">10 - Building stone</option>
+		<option value="11">11 - Natural sands</option>
+		<option value="12">12 - Gravel</option>
+		<option value="13">13 - Nonmetallic minerals</option>
+		<option value="14">14 - Metallic ores</option>
+		<option value="15">15 - Coal</option>
+		<option value="16">16 - Crude petroleum</option>
+		<option value="18">18 - Gasoline</option>
+		<option value="19">19 - Fuel oils</option>
+		<option value="20">20 - Basic chemicals</option>
+		<option value="21">21 - Pharmaceuticals</option>
+		<option value="22">22 - Fertilizers</option>
+		<option value="23">23 - Chemical prods.</option>
+		<option value="24">24 - Plastics/rubber</option>
+		<option value="25">25 - Logs</option>
+		<option value="26">26 - Wood prods.</option>
+		<option value="27">27 - Newsprint/paper</option>
+		<option value="28">28 - Paper articles</option>
+		<option value="29">29 - Printed prods.</option>
+		<option value="30">30 - Textiles/leather</option>
+		<option value="31">31 - Nonmetal min. prods.</option>
+		<option value="32">32 - Base metals</option>
+		<option value="33">33 - Articles-base metal</option>
+		<option value="34">34 - Machinery</option>
+		<option value="35">35 - Electronics</option>
+		<option value="36">36 - Motorized vehicles</option>
+		<option value="37">37 - Transport equip.</option>
+		<option value="38">38 - Precision instruments</option>
+		<option value="39">39 - Furniture</option>
+		<option value="40">40 - Misc. mfg. prods.</option>
+		<option value="41">41 - Waste/scrap</option>
+		<option value="43">43 - Mixed freight</option>
+		<option value="99">99 - Unknown</option></select>
+		<br>
+		Mode:<br>
+		<select id='mode_select'>
+		  <option value='00'>All Modes</option>
+		  <option value="1">Truck</option>
+		  <option value="2">Rail</option>
+		  <option value="3">Water</option>
+		  <option value="5">Air</option>
+		  <option value="6">Pipeline</option>
+		  <option value="7">Other/Unkown</option>
+		</select>
+		<br>
+		Origin or Destination:<br>
+		<select id ='orig_or_dest'>
+		  <option value="orig_fips" >Export Flows</option>
+		  <option value="dest_fips" selected>Import Flows</option>
+		</select>
+		</center>
+	</div>		
+	<h1>County Data</h1>
+		<div id="county_data"></div>
+
+	<h1>Top Trade Partners</h1>
+		<div id="data"></div>
+		
+
+</div>
+<script type="text/javascript">
+	tredis.init();
+	drawTable(tredis.data.map);
+	drawFlowTable(tredis.data.flow); 
+	//jquery on load
+	$(function(){
+		
+		//-----------------------------------------------------------
+  		//load Minesota Counties into selector
+  		//-----------------------------------------------------------
+		//
+
+		d3.json('../data/MN_Counties.topojson', function(error, oh) {
+		    var counties = topojson.feature(oh, oh.objects.counties);
+		    counties.features.forEach(function(d){
+
+		      	$('#county_select')
+		         	.append($("<option></option>")
+		         	.attr("value",d.id)
+		         	.text(d.properties.name+"-"+d.id)); 
+
+			});
+
+			$('#county_select').val(27137);
+
+  		});
+  		tredis.brewer.forEach(function(d,i){
+
+  			$('#colorbrews')
+		         	.append($("<option></option>")
+		         	.attr("value",i)
+		         	.text(d));
+
+  		});
+
+  		//-----------------------------------------------------------
+  		// Load New Data
+  		//-----------------------------------------------------------
+  		$('select').on('change',function(){
+  			console.log();
+  			if($(this).attr('id') == 'colorbrews'){
+
+  				console.log($(this).val());
+  				tredis.brewer_index=$(this).val();
+  				tredis.updateLegend();
+				tredis.updateMap();	
+
+  			}else{
+			    var url = '../data/get/getCountyToNation.php';
+			    commodity = $("#commodity_select").val();
+			    mode = $("#mode_select").val();
+			    granularity = $("#granularity_select").val();
+			    orig_or_dest = $("#orig_or_dest").val();
+			    fips = $('#county_select').val();
+			    $('#heading_commidity').html($("#commodity_select").find(":selected").text());
+			    
+			    $.ajax({url:url, type:'POST',data: { sctg:commodity,mode:mode,orig_or_dest:orig_or_dest,fips:fips},dataType:'json',async:true})
+			        .done(function(data) { 
+			        
+			        	tredis.settings.fips = fips;
+			        	tredis.updateData(data);
+			        	tredis.updateMap();
+			        	//choropleth(data['map'],fips);
+			        	drawTable(data['map']);
+			        	drawFlowTable(data['flow']);    
+			        
+			        })
+			        .fail(function(data) { console.log(data.responseText) });
+		    }
+		})
+		$('#legend-plus').on('click',function(){
+
+			if($('#legend-minus').is(":disabled"))
+			{
+				$('#legend-minus').removeAttr('disabled');
+			}
+			tredis.ll +=1;
+			tredis.updateLegend();
+			tredis.updateMap();
+			if(tredis.ll == 9){
+				$('#legend-plus').attr("disabled", "disabled");
+			}
+
+		});
+		$('#legend-minus').on('click',function(){
+
+			if($('#legend-plus').is(":disabled"))
+			{
+				$('#legend-plus').removeAttr('disabled');
+			}
+			tredis.ll -=1;
+			tredis.updateLegend();
+			tredis.updateMap();
+			if(tredis.ll == 4){
+				$('#legend-minus').attr("disabled", "disabled");
+			}
+
+		});
+
+
+	});	
+
+	function drawFlowTable(data){
+	
+	    $('#county_data').html('<h3>'+$("#county_select").find(":selected").text()+' Totals by Mode </h3>');
+	    $('#county_data').append('<strong>Export Flows</strong><br>');
+	    $('#county_data').append('All Modes : '+number_format((1*data['orig_fips']['total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Truck : '+number_format((1*data['orig_fips']['truck_total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Rail : '+number_format((1*data['orig_fips']['rail_total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Water : '+number_format((1*data['orig_fips']['water_total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Pipeline : '+number_format((1*data['orig_fips']['pipeline_total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Other/Unkown : '+number_format((1*data['orig_fips']['other_total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('<br>');
+	    $('#county_data').append('<strong>Import Flows</strong><br>');
+	    $('#county_data').append('All Modes : '+number_format((1*data['dest_fips']['total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Truck : '+number_format((1*data['dest_fips']['truck_total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Rail : '+number_format((1*data['dest_fips']['rail_total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Water : '+number_format((1*data['dest_fips']['water_total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Pipeline : '+number_format((1*data['dest_fips']['pipeline_total']).toFixed(2))+' tons<br>');
+	    $('#county_data').append('Other/Unkown : '+number_format((1*data['dest_fips']['other_total']).toFixed(2))+' tons<br>');    
+  	
+  	}
+
+	function drawTable(data){
+    
+    	$('#data').html('<h3>Top Trade Destinations<br> by Mode &amp; Commodity</h3>');
+        $('#data').append("<table><thead><tr><td>Rank</td><td>County</td><td>Tons</td></tr></thead>");
+     
+        $.each(data,function(d,v){
+            if(d <20){
+          
+            	$('#data').append("<tr><td>"+(d*1+1)+"&nbsp;&nbsp;</td><td>"+countName(v.orig)+"&nbsp;&nbsp;</td><td> "+(v.tons*1).toFixed(2)+"</td></tr>");
+          
+            }
+        });
+     
+        $('#data').append("</table>");
+  	}
+
+  	function number_format(x) {
+    	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}	
+
+	function countName(inputId){
+		name = '';
+		county_names.forEach(function(d){
+			if (inputId == d.fips){
+			    name = d.name;       
+			}   
+		});
+		return name;
+	}
+
+</script>
+</body>
+</html>
