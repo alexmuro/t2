@@ -108,9 +108,7 @@ var symbol = {
 				.domain([0,maxFlow])
 				.range([0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30]);
 
-		linequantize = d3.scale.log()
-				.domain([0,maxFlow])
-				.range([0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30]);
+		
 
 		//console.log(symbol.quantize.quantiles());
 
@@ -265,10 +263,9 @@ var symbol = {
 	  	symbol.circles.selectAll("circle")
 	  		.transition().duration(2000)
 	  		.attr("r", function(d, i) {
-	  			console.l
-	  			console.log(symbol.quantize(countByDest[d.id]*1));
+	  			
 	  			if(isNaN(symbol.quantize(countByDest[d.id]*1))){ return 1;}
-			   else { return symbol.quantize(countByDest[d.id]*1)}
+			   	else { return symbol.quantize(countByDest[d.id]*1)}
 
 	  		})
 		    .sort(function(a, b) { return countByOrig[b.id] - countByOrig[a.id]; });
@@ -286,9 +283,13 @@ var symbol = {
 			              //console.log(i,"spaaace", max)
 
 			            }
-			            return d.tons/(max/2)
+			            linequantize = d3.scale.sqrt()
+							.domain([0,max])
+							.range([0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30]);
+
+			            if(isNaN(linequantize(d.tons))) {return 1;}
+			            else{return linequantize(d.tons);
 			          }            
 		        })
-		
 	}
 }
