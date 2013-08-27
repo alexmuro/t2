@@ -12,7 +12,7 @@
 	<link rel="stylesheet" type="text/css" href="../resources/css/leaflet.css" />
 
 	<!-- Javascript Includes -->
-	<script type="text/javascript" src="../resources/js/jquery-1.9.1.min.js"></script><style type="text/css"></style>
+	<script type="text/javascript" src="../resources/js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="../resources/js/d3.v3.min.js"></script>	
 	<script type="text/javascript" src="../resources/js/leaflet.js"></script>
 	<script type="text/javascript" src="../resources/js/queue.v1.min.js"></script>
@@ -28,6 +28,13 @@
     <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/BVTouchable.js"></script>
     <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/TangleKit.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="../resources/DataTables-1.9.4/media/css/jquery.dataTables.css" />
+    <script src='../resources/DataTables-1.9.4/media/js/jquery.dataTables.min.js'></script>
+	<script src='../resources/DataTables-1.9.4/extras/TableTools/media/js/TableTools.min.js'></script>
+
+
+	<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script> 
+
     <script type="text/javascript" src="../data/us-county-names.js"></script>
 	<script type="text/javascript" src="js/tredis.js"></script>
 	<script type="text/javascript" src="js/tangle-legend.js"></script>
@@ -36,6 +43,9 @@
 </head>
 
 <body>
+
+
+
 
 <div id="viz"></div>
 <div id="loading" style="display: none;">loading</div>
@@ -55,6 +65,9 @@
 			<button id="legend-minus" value="- threshold">- Threshold</button>
 			<hr>
 			Color Scale : <select id="colorbrews"></select>
+			<hr>
+			<center><button id="exportMap" value="">Export Map</button></center>
+			<div id="download"></div>
 		</div>
 	</div>
 	
@@ -130,12 +143,14 @@
 		  <option value="dest_fips" selected>Import Flows</option>
 		</select>
 		</center>
-	</div>		
+	</div>
+	<h1>Top Trade Partners</h1>
+		<div id="data"></div>
+
 	<h1>County Data</h1>
 		<div id="county_data"></div>
 
-	<h1>Top Trade Partners</h1>
-		<div id="data"></div>
+	
 		
 
 </div>
@@ -146,6 +161,23 @@
 	//jquery on load
 	$(function(){
 		
+		//-------------------------------------
+		//Save Map as PNG
+		//-------------------------------------
+		$("#exportMap").on('click',function() {
+		
+			var html = d3.select(".leaflet-overlay-pane svg")
+		        .attr("title", "test2")
+		        .attr("version", 1.1)
+		        .attr("xmlns", "http://www.w3.org/2000/svg")
+		        .node().parentNode.innerHTML;
+
+		// the canvas calls to output a png
+		$('#download').html("<a style='font-size:.8em;' alt='exported_county_flow_map.png' href=data:image/svg+xml;base64,"+ btoa(html)+">Right Click to Download</a>");
+			// do what you want with the base64, write to screen, post to server, etc...
+		});
+
+
 		//-----------------------------------------------------------
   		//load Minesota Counties into selector
   		//-----------------------------------------------------------
@@ -243,5 +275,9 @@
 
 
 </script>
+<form id="svgform" method="post" action="download.pl">
+ <input type="hidden" id="output_format" name="output_format" value="">
+ <input type="hidden" id="data" name="data" value="">
+</form>
 </body>
 </html>

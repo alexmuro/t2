@@ -22,18 +22,29 @@
 
 	function drawTable(data){
     
-    	$('#data').html('<h3>Top Trade Destinations<br> by Mode &amp; Commodity</h3>');
-        $('#data').append("<table><thead><tr><td>Rank</td><td>County</td><td>Tons</td></tr></thead>");
+    	var tbl_body= "<table id='dynTable'><thead><tr><th>Rank</th><th>Fips</th><th>County</th><th>Tons</th></tr></thead><tbody>";
      
         $.each(data,function(d,v){
-            if(d <20){
-          
-            	$('#data').append("<tr><td>"+(d*1+1)+"&nbsp;&nbsp;</td><td>"+countName(v.orig)+"&nbsp;&nbsp;</td><td> "+(v.tons*1).toFixed(2)+"</td></tr>");
-          
+            if(d < 100){
+            	tbl_body += "<tr><td>"+(d*1+1)+"</td><td>"+v.orig+"</td><td>"+countName(v.orig)+"</td><td> "+(v.tons*1).toFixed(2)+"</td></tr>";
             }
         });
      
-        $('#data').append("</table>");
+        tbl_body += "</tbody></table><br><br>";
+        $("#data").html(tbl_body);
+
+        var $table = $('#dynTable');
+        $table.dataTable({
+	       	"bPaginate": true,
+	       	"numSorting": [[ 0, "asc" ]],
+	       	"aoColumns": [null,null,null,null],
+	       	"sDom": 'T<"clear">lfrtip',
+	       	"oTableTools": {
+	            "sSwfPath": "../resources/swf/copy_csv_xls_pdf.swf"
+	        }
+	        
+    	});
+
   	}
 
   	function number_format(x) {
@@ -49,3 +60,25 @@
 		});
 		return name;
 	}
+
+	/*
+   Utility function: populates the <FORM> with the SVG data
+   and the requested output format, and submits the form.
+*/
+function submit_download_form(output_format)
+{
+	console.log('submitted');
+	// Get the d3js SVG element
+	var tmp = $(".leaflet-overlay-pane");
+	var svg = $(".leaflet-overlay-pane svg");
+	// Extract the data as SVG text string
+	var svg_xml = (new XMLSerializer).serializeToString(svg);
+
+	// Submit the <FORM> to the server.
+	// The result will be an attachment file to download.
+	var form = document.getElementById("svgform");
+	form['output_format'].value = output_format;
+	form['data'].value = svg_xml ;
+	form.submit();
+}
+	
