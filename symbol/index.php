@@ -22,7 +22,7 @@
 </head>
 <body>
  <header>
-  <a href="/tredis/" rel="author">AVAIL Labs Tredis Demo</a>
+  <a href="/t2/" rel="author">AVAIL Labs Tredis Demo</a>
   <aside>August 26th, 2013</aside>
 </header>
 
