@@ -30,7 +30,8 @@ $(function(){ // on page load
 	choropleth.init('map');//load choropleth map in map div
 })
 </script>
-</body>```
+</body>
+```
 
 ### choropleth.settings ###
 Choropleth settings is a json object which tells the map where to get data. The default values are :
