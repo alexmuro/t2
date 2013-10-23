@@ -108,26 +108,35 @@ mode sets the mode of transportation that is queried for. Must be a two characte
 
 |Value| Meaning| 
 |-----:|:------|
-|'00'|All Modes|
-|'1'|Truck|
-|'2'|Rail|
-|'3'|Water|
-|'5'|Air|
-|'6'|Pipeline|
-|'7'|Other/Unkown|
+|"00"|All Modes|
+|"1"|Truck|
+|"2"|Rail|
+|"3"|Water|
+|"5"|Air|
+|"6"|Pipeline|
+|"7"|Other/Unkown|
 
 ##### settings.orig_or_dest #####
 |Value| Meaning| 
 |-----------:|:-----------|
-|'dest_fips'| Import Flows|
-|'orig_fips'| Export Flows|
+|"dest_fips"| Import Flows|
+|"orig_fips"| Export Flows|
 
 ##### settings.fips ##### 
 
 This specifies which county is being queried for. This setting will also make that county appear in red on the map.
 
 
-### Data Source Data Format ###
+## Data Source Data Format ##
+The data source is accessed with the following call:
+```javascript
+		$.ajax({url:choropleth.settings.datasource, 
+			type : 'POST',
+			data:choropleth.settings,
+			dataType:'json',
+			async:false
+		})
+```
 The data source must return a JSON object of the following format:
 
 ```json
