@@ -127,3 +127,43 @@ mode sets the mode of transportation that is queried for. Must be a two characte
 This specifies which county is being queried for. This setting will also make that county appear in red on the map.
 
 
+### Data Source Data Format ###
+The data source must return a JSON object of the following format:
+
+```json
+{
+    "flow": {
+        "orig_fips": {
+            "orig_fips": "27137",
+            "total": "37924.7",
+            "truck_total": "9571.13",
+            "rail_total": "17596.5",
+            "water_total": "2414.25",
+            "air_total": "8272.47",
+            "pipeline_total": "39.0653",
+            "other_total": "31.2147"
+        },
+        "dest_fips": {
+            "orig_fips": "27137",
+            "total": "6522.69",
+            "truck_total": "5992.76",
+            "rail_total": "318.412",
+            "water_total": "3.22513",
+            "air_total": "87.5901",
+            "pipeline_total": "64.7942",
+            "other_total": "55.8819"
+        }
+    },
+    "map": [
+        {
+            "orig": "27137",
+            "tons": "710.5506406377215"
+        },
+        {
+            "orig": "55031",
+            "tons": "195.67821738555554"
+        },
+        ...
+    ]
+}
+```
