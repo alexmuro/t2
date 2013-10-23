@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
 	<!-- Meta Data -->	
@@ -6,10 +5,13 @@
 	<meta name="description" content="description">
 	<meta name="keywords" content="keywords">
 
-	<!-- Cascading Style Sheets -->
+	<!-- ();
+Cascading Style Sheets -->
 	<link rel="stylesheet" type="text/css" href="css/font.css"  >
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" type="text/css" href="../resources/css/leaflet.css" />
+	<link rel="stylesheet" href="../resources/css/TangleKit.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="../resources/css/jquery.dataTables.css" />	
 
 	<!-- Javascript Includes -->
 	<script type="text/javascript" src="../resources/js/jquery-1.9.1.min.js"></script>
@@ -18,27 +20,17 @@
 	<script type="text/javascript" src="../resources/js/queue.v1.min.js"></script>
 	<script type="text/javascript" src="../resources/js/topojson.v1.min.js"></script>
 	<script type="text/javascript" src="../resources/js/colorbrewer.js"></script>
-
-	<script type="text/javascript" src="../resources/Tangle-0.1.0/Tangle.js"></script>
-
-    <!-- TangleKit (optional) -->
-    <link rel="stylesheet" href="../resources/Tangle-0.1.0/TangleKit/TangleKit.css" type="text/css">
-    <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/mootools.js"></script>
-    <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/sprintf.js"></script>
-    <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/BVTouchable.js"></script>
-    <script type="text/javascript" src="../resources/Tangle-0.1.0/TangleKit/TangleKit.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="../resources/DataTables-1.9.4/media/css/jquery.dataTables.css" />
-    <script src='../resources/DataTables-1.9.4/media/js/jquery.dataTables.min.js'></script>
-	<script src='../resources/DataTables-1.9.4/extras/TableTools/media/js/TableTools.min.js'></script>
-
-
+	<script type="text/javascript" src="../resources/js/tangle.min.js"></script>
+	<script type="text/javascript" src='../resources/js/jquery.dataTables.min.js'></script>
+	<script type="text/javascript" src='../resources/js/TableTools.min.js'></script>
 	<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script> 
 
+	<!-- TangleKit For Legend -->
+	
+    
     <script type="text/javascript" src="../data/us-county-names.js"></script>
-	<script type="text/javascript" src="js/tredis.js"></script>
-	<script type="text/javascript" src="js/tangle-legend.js"></script>
-	<script type="text/javascript" src="js/helper-functions.js"></script>
+	<script type="text/javascript" src="js/choropleth.js"></script>
+
 	<title>AVAIL County Trade Visualization</title>
 </head>
 
@@ -155,9 +147,9 @@
 
 </div>
 <script type="text/javascript">
-	tredis.init();
-	drawTable(tredis.data.map);
-	drawFlowTable(tredis.data.flow); 
+	choropleth.init();
+	drawTable(choropleth.data.map);
+	drawFlowTable(choropleth.data.flow); 
 	//jquery on load
 	$(function(){
 		
@@ -197,7 +189,7 @@
 			$('#county_select').val(27137);
 
   		});
-  		tredis.brewer.forEach(function(d,i){
+  		choropleth.brewer.forEach(function(d,i){
 
   			$('#colorbrews')
 		         	.append($("<option></option>")
@@ -214,9 +206,9 @@
   			if($(this).attr('id') == 'colorbrews'){
 
   				console.log($(this).val());
-  				tredis.brewer_index=$(this).val();
-  				tredis.updateLegend();
-				tredis.updateMap();	
+  				choropleth.brewer_index=$(this).val();
+  				choropleth.updateLegend();
+				choropleth.updateMap();	
 
   			}else{
 			    var url = '../data/get/getCountyToNation.php';
@@ -230,9 +222,9 @@
 			    $.ajax({url:url, type:'POST',data: { sctg:commodity,mode:mode,orig_or_dest:orig_or_dest,fips:fips},dataType:'json',async:true})
 			        .done(function(data) { 
 			        
-			        	tredis.settings.fips = fips;
-			        	tredis.updateData(data);
-			        	tredis.updateMap();
+			        	choropleth.settings.fips = fips;
+			        	choropleth.updateData(data);
+			        	choropleth.updateMap();
 			        	//choropleth(data['map'],fips);
 			        	drawTable(data['map']);
 			        	drawFlowTable(data['flow']);    
@@ -247,10 +239,10 @@
 			{
 				$('#legend-minus').removeAttr('disabled');
 			}
-			tredis.ll +=1;
-			tredis.updateLegend();
-			tredis.updateMap();
-			if(tredis.ll == 9){
+			choropleth.ll +=1;
+			choropleth.updateLegend();
+			choropleth.updateMap();
+			if(choropleth.ll == 9){
 				$('#legend-plus').attr("disabled", "disabled");
 			}
 
@@ -261,10 +253,10 @@
 			{
 				$('#legend-plus').removeAttr('disabled');
 			}
-			tredis.ll -=1;
-			tredis.updateLegend();
-			tredis.updateMap();
-			if(tredis.ll == 4){
+			choropleth.ll -=1;
+			choropleth.updateLegend();
+			choropleth.updateMap();
+			if(choropleth.ll == 4){
 				$('#legend-minus').attr("disabled", "disabled");
 			}
 
