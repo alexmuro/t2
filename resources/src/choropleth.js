@@ -3,9 +3,10 @@ var choropleth = {
 	quantize : {},
 	threshold : {}, 
 	rateById:d3.map(),
-	container:'body',
-	legendContainer:'legend-output',
-	settings : {datasource:'',sctg : '00' , mode : "00" , orig_or_dest : 'dest_fips' , fips : 27137},
+	container:'',
+	legendContainer:'',
+	opacity:1,
+	settings : {datasource:'',sctg : '00' , mode : "00" , orig_or_dest : 'dest_fips' , fips : '27137'},
 	//data_url:'../data/get/getCountyToNation.php',
 	svg:{},
 	g:{},
@@ -94,6 +95,7 @@ var choropleth = {
 			.attr("d", path)
 			.attr("stroke",'#000')
 			.attr("fill",function(d){ if(!isNaN(choropleth.rateById.get(d.id))){return choropleth.threshold(choropleth.rateById.get(d.id));}else{return '#fff';} })
+			.attr('opacity',function(d){ if(d.id.toString().length == 2){return 0}else{return choropleth.opacity}})
 			.on("mouseover", function(d) { d3.select("#hover").html('County: '+countName(d.id)+'<br>Tons: '+(choropleth.rateById.get(d.id)/1000).toFixed(2)); });
 
 		// svg.append("path")
@@ -177,7 +179,7 @@ var choropleth = {
 			//.on("mouseover", function(d) { d3.select("#hover").html('County: '+d.id+'<br>Tons: '+(choropleth.rateById.get(d.id)/1000).toFixed(2)); });
 	},
 	setLegend : function(){
-		if(typeof choropleth.threshold.domain != 'undefined'){
+		if(typeof choropleth.threshold.domain != 'undefined' && choropleth.legendContainer != ''){
 			var legendText = '<hr><h3>Tons Traded</h3><ul id="tangle-legend">';
 			var prev = 0;
 			var numbers = ["zero","one","two","three","four","five","six","seven","eight","nine"];
