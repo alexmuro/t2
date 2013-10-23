@@ -4,7 +4,8 @@ var choropleth = {
 	threshold : {}, 
 	rateById:d3.map(),
 	container:'body',
-	settings : {sctg : '00' , mode : "00" , orig_or_dest : 'dest_fips' , fips : 27137},
+	legendContainer:'legend-output',
+	settings : {datasource:'',sctg : '00' , mode : "00" , orig_or_dest : 'dest_fips' , fips : 27137},
 	//data_url:'../data/get/getCountyToNation.php',
 	svg:{},
 	g:{},
@@ -18,54 +19,66 @@ var choropleth = {
 			choropleth.container = container;
 		}
 		toggles.init();
-		//loader.push(choropleth.loadData);
+		if(choropleth.settings.datasource != ''){
+			loader.push(choropleth.loadData);
+		}
 		loader.push(choropleth.drawMap);
 		loader.run();
 	},
 
-	loadData : function(data) {
+	loadData : function() {
 
-		choropleth.data = data;
-
-		var max = 0;
-		var ton_domain = [];
-
-		data.map.forEach(function(d) { 
-			
-			choropleth.rateById.set((d.orig)*1, +d.tons*1000);
-			if( d.tons > max ) {
-			
-			  max = d.tons;
-			
-			}
-				
-			ton_domain.push(d.tons);
-
+		$.ajax({url:choropleth.settings.datasource, 
+				type : 'POST',
+				data:choropleth.settings,
+				dataType:'json',
+				async:false
 		})
-		max = ton_domain[0];
-		if(max < 100){max = 100;}
+		.done(function(data) { 
 
-		choropleth.quantize = d3.scale.quantile()
-			.domain([0,(max*3)])
-			.range(colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll]);
+			choropleth.data = data;
 
-		choropleth.legend_domain =choropleth.quantize.quantiles();
+			var max = 0;
+			var ton_domain = [];
 
-		choropleth.threshold = d3.scale.threshold()
-			.domain(choropleth.legend_domain)
-			.range(colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll])
+			data.map.forEach(function(d) { 
+				
+				choropleth.rateById.set((d.orig)*1, +d.tons*1000);
+				if( d.tons > max ) {
+				
+				  max = d.tons;
+				
+				}
+					
+				ton_domain.push(d.tons);
+
+			})
+			max = ton_domain[0];
+			if(max < 100){max = 100;}
+
+			choropleth.quantize = d3.scale.quantile()
+				.domain([0,(max*3)])
+				.range(colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll]);
+
+			choropleth.legend_domain =choropleth.quantize.quantiles();
+
+			choropleth.threshold = d3.scale.threshold()
+				.domain(choropleth.legend_domain)
+				.range(colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll])
+		})
+		.fail(function(data) { console.log(data.responseText) });
 		
 		loader.run();
 	},
 
 	drawMap : function() {
 
-		console.log('?',choropleth.container);
 		var map = new L.Map(choropleth.container, {
 			center: [37.8, -96.9],
-			zoom: 4
+			zoom: 4,
+			attributionControl:false
 		})
-		.addLayer(new L.TileLayer("http://{s}.tile.cloudmade.com/117aaa97872a451db8e036485c9f464b/998/256/{z}/{x}/{y}.png"));
+		//.addLayer(new L.TileLayer("http://{s}.tile.cloudmade.com/117aaa97872a451db8e036485c9f464b/998/256/{z}/{x}/{y}.png"));
 
 			
 		choropleth.svg = d3.select(map.getPanes().overlayPane).append("svg"),
@@ -74,7 +87,6 @@ var choropleth = {
 		var bounds = [[-174.756436222, 17.467543002],[-66.949091003, 69.002433285]];
 		path = d3.geo.path().projection(project);
 
-		console.log(choropleth.us);
 		feature=choropleth.g.selectAll("path")
 			.data(topojson.feature(choropleth.us, choropleth.us.objects.counties).features)
 		.enter().append("path")
@@ -151,6 +163,7 @@ var choropleth = {
 				.domain(choropleth.legend_domain)
 				.range(colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll])
 
+		console.log(choropleth.threshold.domain,'asd');
 			choropleth.setLegend();
 		
 	},
@@ -164,30 +177,31 @@ var choropleth = {
 			//.on("mouseover", function(d) { d3.select("#hover").html('County: '+d.id+'<br>Tons: '+(choropleth.rateById.get(d.id)/1000).toFixed(2)); });
 	},
 	setLegend : function(){
-		var legendText = '<hr><h3>Tons Traded</h3><ul id="tangle-legend">';
-		var prev = 0;
-		var numbers = ["zero","one","two","three","four","five","six","seven","eight","nine"];
-		choropleth.threshold.domain().forEach(function(d,i){
+		if(typeof choropleth.threshold.domain != 'undefined'){
+			var legendText = '<hr><h3>Tons Traded</h3><ul id="tangle-legend">';
+			var prev = 0;
+			var numbers = ["zero","one","two","three","four","five","six","seven","eight","nine"];
+			choropleth.threshold.domain().forEach(function(d,i){
+				
+				if(i == 0){
+				
+					legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i]+'"></rect></svg><span>&lt;= <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>'
+				
+				}
+				else{
+				
+					legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i]+'"></rect></svg><span><span data-var="'+numbers[i-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-format="%.2f"></span> - <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
+				
+				}		
+			})
 			
-			if(i == 0){
-			
-				legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i]+'"></rect></svg><span>&lt;= <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>'
-			
-			}
-			else{
-			
-				legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i]+'"></rect></svg><span><span data-var="'+numbers[i-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-format="%.2f"></span> - <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
-			
-			}		
-		})
-		
-		legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][choropleth.threshold.domain().length]+'"></rect></svg><span>&gt; <span data-var="'+numbers[choropleth.threshold.domain().length-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-max=1000 data-format="%.2f"></span> tons</span></li>'
-			
-		legendText +="</ul>";
-		$("#legend-output").html(legendText);
-		choropleth.setUpTangle();
-		loader.run();
-
+			legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][choropleth.threshold.domain().length]+'"></rect></svg><span>&gt; <span data-var="'+numbers[choropleth.threshold.domain().length-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-max=1000 data-format="%.2f"></span> tons</span></li>'
+				
+			legendText +="</ul>";
+			$("#"+choropleth.legendContainer).html(legendText);
+			choropleth.setUpTangle();
+			loader.run();
+		}
 	},
 	updateLegend : function(){
 

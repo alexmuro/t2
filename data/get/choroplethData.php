@@ -1,5 +1,4 @@
 <?php
-	header('Access-Control-Allow-Origin: *'); 
 	error_reporting(E_ALL ^ E_DEPRECATED);
 	$commodity =$_POST['sctg'];
 	$mode = $_POST['mode'];
