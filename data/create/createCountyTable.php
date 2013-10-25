@@ -15,14 +15,13 @@ while($row = mysql_fetch_array($rs)){
 	echo $state_fips."_".$fips."<br>";
 
 
-	$sql = "CREATE TABLE `".$state_fips.$county_fips."` (
-	  `dms_orig` varchar(45) DEFAULT NULL,
+	$sql = "
+		DROP TABLE IF EXISTS `".$state_fips.$county_fips."`;
+		CREATE TABLE `".$state_fips.$county_fips."` (
 	  `dms_orig_fips` varchar(45) DEFAULT NULL,
-	  `dms_dest` varchar(45) DEFAULT NULL,
 	  `dms_dest_fips` varchar(45) DEFAULT NULL,
 	   `dms_mode` varchar(45) DEFAULT NULL,
 	  `sctg2` varchar(45) DEFAULT NULL,
-	  `value_2010` float DEFAULT NULL,
 	  `curval_2010` float DEFAULT NULL,
 	  `tons_2010` float DEFAULT NULL,
 	  KEY `orig` (`dms_orig_fips`),
@@ -32,7 +31,7 @@ while($row = mysql_fetch_array($rs)){
 	  KEY `scgt` (`sctg2`)
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 	mysql_query($sql) or die($sql." ".mysql_error());
-	$sql ="insert into `".$state_fips.$county_fips."` select * from tbl_maine_domestic_db_3 where dms_orig_fips = $fips or dms_dest_fips = $fips";
+	$sql ="insert into `".$state_fips.$county_fips."` select dms_orig_fips,dms_dest_fips,dms_mode,sctg2,curval_2010,tons_2010 from tbl_maine_domestic_db_3 where dms_orig_fips = $fips or dms_dest_fips = $fips";
 	mysql_query($sql) or die($sql." ".mysql_error());
 	echo json_encode("table ".$state_fips.$fips." created.");
 }
