@@ -1,0 +1,50 @@
+
+Importing data into MYSQL
+
+
+Step 1 - Create Table
+delimiter $$
+CREATE TABLE `tbl_maine_domestic_db` (
+  `dms_orig` varchar(45) DEFAULT NULL,
+  `dms_orig_fips` varchar(45) DEFAULT NULL,
+  `dms_dest` varchar(45) DEFAULT NULL,
+  `dms_dest_fips` varchar(45) DEFAULT NULL,
+   `dms_mode` varchar(45) DEFAULT NULL,
+  `sctg2` varchar(45) DEFAULT NULL,
+  `value_2010` float DEFAULT NULL,
+  `curval_2010` float DEFAULT NULL,
+  `tons_2010` float DEFAULT NULL,
+  KEY `orig` (`dms_orig_fips`),
+  KEY `dest` (`dms_dest_fips`),
+  KEY `orig-dest` (`dms_dest_fips`,`dms_orig_fips`),
+  KEY `mode` (`dms_mode`),
+  KEY `scgt` (`sctg2`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+
+
+
+mysqlimport  --ignore-lines=1 --fields-terminated-by=, --fields-enclosed-by=\" --columns='dms_orig,dms_orig_fips,dms_dest,dms_dest_fips,dms_mode,sctg2,value_2010,curval_2010,tons_2010' --local -u root -p tredis tbl_maine_domestic_db.csv
+
+['23001','23003','23005','23007','23009','23011','23013','23015','23017','23019','23021','23023','23025','23027','23029','23031']
+
+
+dms_orig_fips,dms_mode,dms_dest_fips,fr_inmode,fr_orig,sctg2,curval_2010,tons_2010
+
+
+CREATE TABLE `tbl_maine_project_exports` (
+  `dms_orig_fips` varchar(45) DEFAULT NULL,
+  `dms_mode` varchar(45) DEFAULT NULL,
+  `dms_dest_fips` varchar(45) DEFAULT NULL,
+  `fr_inmode` varchar(45) DEFAULT NULL,
+  `fr_orig` varchar(45) DEFAULT NULL,
+  `sctg2` varchar(45) DEFAULT NULL,
+  `curval_2010` float DEFAULT NULL,
+  `tons_2010` float DEFAULT NULL,
+  KEY `orig` (`dms_orig_fips`),
+  KEY `dest` (`dms_dest_fips`),
+  KEY `orig-dest` (`dms_dest_fips`,`dms_orig_fips`),
+  KEY `mode` (`dms_mode`),
+  KEY `scgt` (`sctg2`)
+)
+
+mysqlimport  --ignore-lines=1 --fields-terminated-by=, --fields-enclosed-by=\" --columns='dms_orig_fips,dms_mode,dms_dest_fips,fr_inmode,fr_orig,sctg2,curval_2010,tons_2010' --local -u root -p tredis tbl_maine_project_exports.csv

@@ -1,0 +1,77 @@
+<html>
+<head>
+	<!-- Meta Data -->	
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="description" content="description">
+	<meta name="keywords" content="keywords">
+
+	<!-- ();
+Cascading Style Sheets -->
+	<link rel="stylesheet" type="text/css" href="css/font.css"  >
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="../resources/css/leaflet.css" />
+	<link rel="stylesheet" href="../resources/css/TangleKit.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="../resources/css/jquery.dataTables.css" />	
+
+	<!-- Javascript Includes -->
+	<script type="text/javascript" src="../resources/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="../resources/js/d3.v3.min.js"></script>	
+	<script type="text/javascript" src="../resources/js/leaflet.js"></script>
+	<script type="text/javascript" src="../resources/js/queue.v1.min.js"></script>
+	<script type="text/javascript" src="../resources/js/topojson.v1.min.js"></script>
+	<script type="text/javascript" src="../resources/js/colorbrewer.js"></script>
+	<script type="text/javascript" src="../resources/js/tangle.min.js"></script>
+	<script type="text/javascript" src='../resources/js/jquery.dataTables.min.js'></script>
+	<script type="text/javascript" src='../resources/js/TableTools.min.js'></script>
+	<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script> 
+
+    
+    <script type="text/javascript" src="../resources/src/choropleth.js"></script>
+
+	<title>County Trade Visualization</title>
+</head>
+<body>
+<div id="map"></div>
+<div id="info"></div>
+<div id="coords"></div>
+
+<div id="hover"></div>
+<div id="legend">
+<h2><a href="#" class="closed">Legend</a></h2>
+	<div id="legendConatiner"></div>
+</div>
+<div id="container">
+	
+	<h1>Display Controls</h1>
+	<div id="content">
+		<center>
+		Selected County:<br><div id="county_select"></div>
+		Commodity:<br><div id="commodity_select"></div>
+		Mode:<br><div id="mode_select"></div>
+		Origin or Destination:<br><div id="orig_or_dest_select"></div>
+		</center>
+	</div>
+	<h1>Top Trade Partners</h1>
+		<div id="data"></div>
+
+	<h1>County Data</h1>
+		<div id="county_data"></div>
+
+	
+		
+
+</div>
+<script>
+$(function(){ // on page load
+	var countyList = ['23001','23003','23005','23007','23009','23011','23013','23015','23017','23019','23021','23023','23025','23027','23029','23031'];
+	choropleth.settings.datasource = '/t2/data/get/getCountyToNation_ME.php';
+	choropleth.legendConatiner="legendConatiner";
+	choropleth.init('map',countyList);
+})
+</script>
+<form id="svgform" method="post" action="download.pl">
+ <input type="hidden" id="output_format" name="output_format" value="">
+ <input type="hidden" id="data" name="data" value="">
+</form>
+</body>
+</html>
