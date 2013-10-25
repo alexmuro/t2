@@ -9,7 +9,7 @@ var choropleth = {
 	commoditySelectContainer:'commodity_select',
 	modeSelectContainer:'mode_select',
 	origOrDestSelectContainer:'orig_or_dest_select',
-	flowTableConatiner:'flow_data',
+	flowTableContainer:'flow_data',
 	sumTableContainer:'sum_data',
 	opacity:1,
 	countyList:[],
@@ -42,7 +42,6 @@ var choropleth = {
 		loader.run();
 	},
 	legendInit: function(){
-		console.log(choropleth.legendContainer);
 		$('#'+choropleth.legendContainer)
 			.append($('<div></div>')
 				.attr("id",choropleth.legendContainer+"_info")
@@ -255,7 +254,7 @@ var choropleth = {
 				.range(colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll]);
 			
 			choropleth.drawFlowTable(choropleth.data.map);
-			choropleth.drawSumTable(choropleth.data.flow);
+			//choropleth.drawSumTable(choropleth.data.flow);
 		})
 		.fail(function(data) { console.log(data.responseText) });
 		
@@ -432,8 +431,7 @@ var choropleth = {
 	},
 	drawSumTable: function (data){
 	
-		console.log(data);
-	    $('#'+choropleth.sumTableContainer).html('<h3>'+$("#county_select").find(":selected").text()+' Totals by Mode </h3>');
+		$('#'+choropleth.sumTableContainer).html('<h3>'+$("#county_select").find(":selected").text()+' Totals by Mode </h3>');
 	    $('#'+choropleth.sumTableContainer).append('<strong>Export Flows</strong><br>');
 	    $('#'+choropleth.sumTableContainer).append('All Modes : '+number_format((1*data['orig_fips']['total']).toFixed(2))+' tons<br>');
 	    $('#'+choropleth.sumTableContainer).append('Truck : '+number_format((1*data['orig_fips']['truck_total']).toFixed(2))+' tons<br>');
@@ -453,6 +451,7 @@ var choropleth = {
   	},
 	drawFlowTable: function (data){
     
+    	console.log(data);
     	var tbl_body= "<table id='dynTable'><thead><tr><th>Rank</th><th>Fips</th><th>County</th><th>Tons</th></tr></thead><tbody>";
      
         $.each(data,function(d,v){
