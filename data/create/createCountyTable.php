@@ -5,7 +5,7 @@ $test = new db();
 
 $inscon = $test->connect();
 
-$sql = "select distinct dms_orig_fips from tbl_maine_domestic_db_3 where dms_orig_fips like '55___' ";
+$sql = "select distinct dms_orig_fips from tbl_corrected_maine_domestic where dms_orig_fips like '23___' ";
 $rs = mysql_query($sql) or die($sql." ".mysql_error());
 
 while($row = mysql_fetch_array($rs)){
@@ -16,8 +16,10 @@ while($row = mysql_fetch_array($rs)){
 
 
 	$sql = "
-		DROP TABLE IF EXISTS `".$state_fips.$county_fips."`;
-		CREATE TABLE `".$state_fips.$county_fips."` (
+		DROP TABLE IF EXISTS `".$state_fips.$county_fips."`";
+		mysql_query($sql) or die($sql." ".mysql_error());
+	
+	$sql="CREATE TABLE `".$state_fips.$county_fips."` (
 	  `dms_orig_fips` varchar(45) DEFAULT NULL,
 	  `dms_dest_fips` varchar(45) DEFAULT NULL,
 	   `dms_mode` varchar(45) DEFAULT NULL,
@@ -31,7 +33,7 @@ while($row = mysql_fetch_array($rs)){
 	  KEY `scgt` (`sctg2`)
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 	mysql_query($sql) or die($sql." ".mysql_error());
-	$sql ="insert into `".$state_fips.$county_fips."` select dms_orig_fips,dms_dest_fips,dms_mode,sctg2,curval_2010,tons_2010 from tbl_maine_domestic_db_3 where dms_orig_fips = $fips or dms_dest_fips = $fips";
+	$sql ="insert into `".$state_fips.$county_fips."` select dms_orig_fips,dms_dest_fips,dms_mode,sctg2,curval_2010,tons_2010 from tbl_corrected_maine_domestic where dms_orig_fips = $fips or dms_dest_fips = $fips";
 	mysql_query($sql) or die($sql." ".mysql_error());
 	echo json_encode("table ".$state_fips.$fips." created.");
 }
