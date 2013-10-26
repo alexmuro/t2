@@ -201,7 +201,6 @@ var choropleth = {
 	    $('#origOrDest_selector').val(choropleth.orig_or_dest[0].value);    
 		
 		$('#origOrDest_selector').on('change',function(){
-			console.log('change');
 			choropleth.settings.orig_or_dest = $(this).val();
         	loader.push(choropleth.loadData);
         	loader.push(choropleth.updateMap);
@@ -224,7 +223,7 @@ var choropleth = {
 		.done(function(data) { 
 
 			choropleth.data = data;
-
+			
 			var max = 0;
 			var ton_domain = [];
 
@@ -451,7 +450,6 @@ var choropleth = {
   	},
 	drawFlowTable: function (data){
     
-    	console.log(data);
     	var tbl_body= "<table id='dynTable'><thead><tr><th>Rank</th><th>Fips</th><th>County</th><th>Tons</th></tr></thead><tbody>";
      
         $.each(data,function(d,v){

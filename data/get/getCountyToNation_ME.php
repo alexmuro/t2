@@ -9,7 +9,7 @@
 	
 	$opposite = 'dms_dest_fips';
 
-	if($orig_or_dest == 'orig_fips'){
+	if($orig_or_dest == 'dms_orig_fips'){
 		$opposite = 'dms_dest_fips';
 	}else{
 		$opposite = 'dms_orig_fips';
@@ -30,13 +30,20 @@
 	include '../config/db.php'; 
 	$test = new db();
 	$inscon = $test->connect();
+	$output = array();
 	$sql = "select $opposite,sum(tons_2010) as all_tons from `$fips` where $orig_or_dest = '$fips' $comm_clause $mode_clause group by $opposite order by all_tons desc ";
+	//$output['sql'] = $sql;
 	$csv = array();
 	$i = 0;
 	$rs=mysql_query($sql) or die($sql." ".mysql_error());
 	while($row = mysql_fetch_assoc( $rs )){
 
-		$csvrow['orig'] = $row[$opposite];
+		$orig = $row[$opposite];
+		if(strlen($row[$opposite]) == 4){
+			//$output['strlen'] 
+			$orig = '0'.$row[$opposite];
+		}
+		$csvrow['orig'] = $orig;
 		$csvrow['tons'] = $row['all_tons'];
 		$csv[] = $csvrow;
 
@@ -51,7 +58,6 @@
 	$row = mysql_fetch_assoc( $rs );
 	$flow['dest_fips'] = $row;
 	
-	$output = array();
 	$output['flow'] = $flow;
 	$output['map'] = $csv; 
 	echo json_encode($output);
