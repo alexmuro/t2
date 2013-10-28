@@ -130,11 +130,7 @@ var choropleth = {
         	loader.push(choropleth.updateMap);
         	loader.push(choropleth.updateLegend);
         	loader.run();
-        	//choropleth.updateMap();
-        	//choropleth(data['map'],fips);
-        	//drawTable(data['map']);
-        	//drawFlowTable(data['flow']);
-		})
+ 		})
 		loader.run();
 	},
 	commoditySelect : function(){
@@ -157,9 +153,7 @@ var choropleth = {
         	loader.push(choropleth.updateMap);
         	loader.push(choropleth.updateLegend);
         	loader.run();
-        	//drawTable(data['map']);
-        	//drawFlowTable(data['flow']);
-		})
+ 		})
 		loader.run();
 	},
 	modeSelect : function(){
@@ -181,8 +175,7 @@ var choropleth = {
         	loader.push(choropleth.updateMap);
         	loader.push(choropleth.updateLegend);
         	loader.run();
-        	//drawTable(data['map']);
-        	//drawFlowTable(data['flow']);
+        	
 		})
 		loader.run();
 
@@ -226,6 +219,11 @@ var choropleth = {
 			
 			var max = 0;
 			var ton_domain = [];
+
+			//reset the value map;
+			choropleth.rateById.forEach(function(key,val){
+				choropleth.rateById.remove(key);
+			})
 
 			data.map.forEach(function(d) { 
 				
@@ -282,14 +280,13 @@ var choropleth = {
 			.attr("class", function(d) { if(d.id == choropleth.settings.fips){ return 'selected';}else{ return 'county'} })
 			.attr("d", path)
 			.attr("stroke",'#000')
-			.attr("fill",function(d){ if(d.id == choropleth.settings.fips){ return '#f00';} if(!isNaN(choropleth.rateById.get(d.id))){return choropleth.threshold(choropleth.rateById.get(d.id));}else{return '#fff';} })
+			.attr("fill",function(d){ 
+				if(d.id == choropleth.settings.fips){ return '#f00';} 
+				if(!isNaN(choropleth.rateById.get(d.id))){return choropleth.threshold(choropleth.rateById.get(d.id));}
+				else{return '#fff';} })
 			.attr('opacity',function(d){ if(d.id.toString().length == 2){return 0}else{return choropleth.opacity}})
 			.on("mouseover", function(d) { d3.select("#hover").html('County: '+countName(d.id)+'<br>Tons: '+(choropleth.rateById.get(d.id)/1000).toFixed(2)); });
 
-		// svg.append("path")
-		//   .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-		//   .attr("class", "states")
-		//   .attr("d", path);
 		  
 		map.on("viewreset", reset);
 		reset();
@@ -327,7 +324,10 @@ var choropleth = {
 		choropleth.g.selectAll("path")
 			.transition().duration(2000)
 			.attr("class", function(d) { if(d.id == choropleth.settings.fips){ return 'selected';}else{ return 'county'} })
-			.attr("fill",function(d){ if(d.id == choropleth.settings.fips){ return '#f00';} if(!isNaN(choropleth.rateById.get(d.id))){return choropleth.threshold(choropleth.rateById.get(d.id));}else{return '#fff';} })
+			.attr("fill",function(d){
+				if(d.id == choropleth.settings.fips){ return '#f00';} 
+				if(!isNaN(choropleth.rateById.get(d.id))){return choropleth.threshold(choropleth.rateById.get(d.id));}
+				else{return '#fff';} })
 			//.on("mouseover", function(d) { d3.select("#hover").html('County: '+d.id+'<br>Tons: '+(choropleth.rateById.get(d.id)/1000).toFixed(2)); });
 		loader.run();
 	},
@@ -524,6 +524,12 @@ var loader = {
 	}	
 
 	function countName(inputId){
+		if(typeof inputId === 'number'){
+			inputId = inputId.toString();
+		}
+		if(inputId.length == 4){
+			inputId = 0+inputId;
+		}
 		return choropleth.countyNames[inputId];
 	}
 
@@ -533,7 +539,6 @@ var loader = {
 	*/
 	function submit_download_form(output_format)
 	{
-		console.log('submitted');
 		// Get the d3js SVG element
 		var tmp = $(".leaflet-overlay-pane");
 		var svg = $(".leaflet-overlay-pane svg");
