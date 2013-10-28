@@ -285,7 +285,7 @@ var choropleth = {
 				if(!isNaN(choropleth.rateById.get(d.id))){return choropleth.threshold(choropleth.rateById.get(d.id));}
 				else{return '#fff';} })
 			.attr('opacity',function(d){ if(d.id.toString().length == 2){return 0}else{return choropleth.opacity}})
-			.on("mouseover", function(d) { d3.select("#hover").html('County: '+countName(d.id)+'<br>Tons: '+(choropleth.rateById.get(d.id)/1000).toFixed(2)); });
+			.on("mouseover", function(d) { d3.select("#hover").html('County: '+countName(d.id)+'<br>Tons (thousands): '+(choropleth.rateById.get(d.id)/1000).toFixed(2)); });
 
 		  
 		map.on("viewreset", reset);
@@ -333,7 +333,7 @@ var choropleth = {
 	},
 	setLegend : function(){
 		if(typeof choropleth.threshold.domain != 'undefined' && choropleth.legendContainer != ''){
-			var legendText = '<hr><h3>Tons Traded</h3><ul id="tangle-legend">';
+			var legendText = '<hr><h3>Tons Traded</h3><i style="font-size:.7em">in thousands of tons</i><ul id="tangle-legend">';
 			var prev = 0;
 			var numbers = ["zero","one","two","three","four","five","six","seven","eight","nine"];
 			choropleth.threshold.domain().forEach(function(d,i){
@@ -450,7 +450,7 @@ var choropleth = {
   	},
 	drawFlowTable: function (data){
     
-    	var tbl_body= "<table id='dynTable'><thead><tr><th>Rank</th><th>Fips</th><th>County</th><th>Tons</th></tr></thead><tbody>";
+    	var tbl_body= "<table id='dynTable'><thead><tr><th>Rank</th><th>Fips</th><th>County</th><th>Tons (thousands)</th></tr></thead><tbody>";
      
         $.each(data,function(d,v){
             if(d < 100){
