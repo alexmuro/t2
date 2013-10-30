@@ -42,7 +42,7 @@ CREATE TABLE `tbl_maine_domestic_db` (
 
 
 
-mysqlimport  --ignore-lines=1 --fields-terminated-by=, --fields-enclosed-by=\" --columns='dms_orig_fips,dms_dest_fips,dms_mode,sctg2,curval_2010,tons_2010' --local -u root -p tredis tbl_maine_domestic_db.csv
+mysqlimport  --ignore-lines=1 --fields-terminated-by=, --fields-enclosed-by=\" --columns='dms_orig_fips,dms_dest_fips,dms_mode,sctg2,curval_2010,tons_2010' --local -u root -p tredis tbl_corrected_maine_domestic.csv
 
 
 CREATE TABLE `tbl_maine_project_exports` (

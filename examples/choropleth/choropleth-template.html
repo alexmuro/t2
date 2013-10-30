@@ -6,9 +6,9 @@
 	<meta name="keywords" content="keywords">
 
 	<!-- Cascading Style Sheets -->
+	<link rel="stylesheet" href="../../resources/css/choropleth.css" type="text/css">
 	<link rel="stylesheet" type="text/css" href="../../resources/css/leaflet.css" />
 	<link rel="stylesheet" href="../../resources/css/TangleKit.css" type="text/css">
-	<link rel="stylesheet" href="../../resources/css/choropleth.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="../../resources/css/jquery.dataTables.css" />	
 
 	<!-- Javascript Includes -->
@@ -29,14 +29,24 @@
 	<title>Choropleth Simple</title>
 </head>
 <body>
-	<div style="width:900px;margin:0 auto;">Blank Choropleth Map Example.</div>
-	<div id="map" style="width:900px;height:600px;margin:0 auto;"></div>
-
+	<div style="width:901px;margin:0 auto;">Choropleth Containers
+		<div id="map" style="width:900px;height:600px;"></div>
+		<div id="county_select"></div>
+		<div id="mode_select"></div>
+		<div id="commodity_select"></div>
+		<div id="orig_or_dest_select"></div>
+		<div id="hover"></div>
+		<div id="legend"></div>
+		<div id="flow_data"></div>
+	</div>
+	
 <script>
 $(function(){ // on page load
-	choropleth.init('map');
+	var countyList = ['23001','23003','23005','23007','23009','23011','23013','23015','23017','23019','23021','23023','23025','23027','23029','23031'];
+	choropleth.settings.fips = '23001';
+	choropleth.settings.datasource = '/t2/data/get/getCountyToNation_ME.php';
+	choropleth.init('map',countyList);
 })
 </script>
 </body>
-
 </html>
