@@ -1,10 +1,10 @@
 EDR Commodity Flow Visualizations
 =================================
-These tools supports so-called “modern” browsers, which generally means everything except IE8 and below.
+These tools support so-called “modern” browsers, which generally means everything except IE8 and below.
 
 Choropleth Maps
 ----------------
-To use choropleth maps simply include chorpleth.0.1.0.min.js in your project along with its dependencies.
+To use choropleth maps simply include choropleth.0.1.0.min.js in your project along with its dependencies.
 
 ### Dependencies ###
 d3js - Javascript Visualization & Mapping Library
@@ -19,9 +19,9 @@ All dependencies can be found in the resources folder.
 See `examples/choropleth/choropleth-simple.html` for an html template for choropleth maps.
 
 
-##Gettings started##
+##Gettings Started##
 
- This is a template is all the code required for creating a choropleth map. This template includes no css for page formatting so it can be easily integrated  with any stylesheets. To view the AVAIL styled choropleth map take a look in the choropleth/ folder for page layout and css.
+ This template is all the code required for creating a choropleth map. The template includes no css for page formatting so it can be easily integrated with any stylesheet. To view the AVAIL styled choropleth map take a look in the /choropleth folder for page layout and css.
 
 
 ```html
@@ -81,17 +81,17 @@ $(function(){ // on page load
 
 ### choropleth.init(container,counties) ###
 
-To create a blank choropleth map pass the element ID to its constructor and the list of counties you wish to be able to visualize.
+To create a blank choropleth map, pass the element ID to its constructor and the list of counties you wish to be able to visualize.
 
 
 ### choropleth.settings ###
-Choropleth settings is a json object which tells the map where to get data. The default values are :
+Choropleth settings is a JSON object which tells the map where to get data. The default values are :
 
 `settings : {datasource:'',sctg : '00' , mode : '00' , orig_or_dest : 'dest_fips' , fips : '27137'}`
 
 before initializing the maps you must at least set choropleth.settings.datasource as in the example above.
 
-Each individual setting is passed as in a POST request to the datasource url to specify what data it should return.See `data/get/getCountytoNation.php' to see how its parsed.
+Each individual setting is passed in a POST request to the datasource url to specify what data it should return.See `data/get/getCountytoNation.php' to see how its parsed.
 
 ##### settings.datasource #####
  
@@ -103,12 +103,12 @@ choropleth.settings.datasource = 'http://vis.availabs.org/t2/data/get/getCountyT
 choropleth.init('map');
 ```
 
-Because all of the rest of the settings are default this will load a map import flows for county 27137 (St Louis County Minnesota), for all commodities, for all modes of transportation. 
+Because all of the rest of the settings are default this will load a map of import flows for county 27137 (St Louis County Minnesota), for all commodities, for all modes of transportation. 
 
 
 ##### settings.sctg #####
 
-sctg sets the commidty code that is queried for. Must be a two character sting.
+sctg sets the commidty code that is queried for. Must be a two character string.
 
 |Value| Meaning| 
 |----:|:----------------|
@@ -158,7 +158,7 @@ sctg sets the commidty code that is queried for. Must be a two character sting.
 
 ##### settings.mode #####
 
-mode sets the mode of transportation that is queried for. Must be a two character sting.
+mode sets the mode of transportation that is queried for. 
 
 |Value| Meaning| 
 |-----:|:------|
@@ -195,7 +195,7 @@ This specifies which county is being queried for. This setting will also make th
  however if you have a naming conflict with one of these containers you can change the contianer name before calling choropleth.init() by simply setting the property to a new container name for example
 
  ```javascript
-  choropleth.legendContainer = 'legend-diplay';
+  choropleth.legendContainer = 'legend-display';
 ```
  The container names refer to the element ID and do not required the jquery style # selector. The matching element for this above example would look like this:
 
