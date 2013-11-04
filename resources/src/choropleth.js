@@ -14,6 +14,7 @@ var choropleth = {
 	sumTableContainer:'sum_data',
 	opacity:1,
 	countyList:[],
+	map:{},
 	settings : {datasource:'',sctg : '00' , mode : "00" , orig_or_dest : 'dest_fips' , fips : '27137'},
 	svg:{},
 	g:{},
@@ -52,12 +53,43 @@ var choropleth = {
 
 		$('#'+choropleth.legendContainer).append($('<div></div>').attr("id",choropleth.legendContainer+"_control").html(legendControls));
 		$("#exportMap").on('click',function() {
-		
+			
+			var legend_html = $("#legend_info").html();
+			//console.log('test',legend_html);
+			//console.log(choropleth.project([-118.25,34.05])[0]);
+			legend_coords=[-100.25,15.05];
+
+			$('#tangle-legend li').each(function(i){
+				d3.select(".leaflet-overlay-pane svg")
+				.append("rect")
+				.attr("x",choropleth.project(legend_coords)[0])
+				.attr("y",(choropleth.project(legend_coords)[1]+30*(i)))
+				.attr("width","20px")
+    			.attr("height","20px")
+    			.attr("fill",colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i])
+			})
+
+			$('#tangle-legend li .legend_text_output').each(function(i){
+				d3.select(".leaflet-overlay-pane svg")
+				.append("text")
+				.attr("x",choropleth.project(legend_coords)[0]+30)
+				.attr("y",(choropleth.project(legend_coords)[1]+30*(i))+15)
+				.attr("width","40px")
+    			.attr("height","20px")
+    			.text($(this).text().replace("drag","").replace("drag","") );
+			})
+			
+    			
+    				
+
 			var html = d3.select(".leaflet-overlay-pane svg")
 				.attr("title", "test2")
 				.attr("version", 1.1)
 				.attr("xmlns", "http://www.w3.org/2000/svg")
 				.node().parentNode.innerHTML;
+			
+			//console.log(html);
+		
 
 			// the canvas calls to output a png
 			$('#download').html("<a style='font-size:.8em;' alt='exported_county_flow_map.png' href=data:image/svg+xml;base64,"+ btoa(html)+">Right Click to Download</a>");
@@ -261,10 +293,9 @@ var choropleth = {
 
 		loader.run();
 	},
-
 	drawMap : function() {
 
-		var map = new L.Map(choropleth.container, {
+		choropleth.map = new L.Map(choropleth.container, {
 			center: [37.8, -96.9],
 			zoom: 4,
 			attributionControl:false
@@ -272,11 +303,11 @@ var choropleth = {
 		//.addLayer(new L.TileLayer("http://{s}.tile.cloudmade.com/117aaa97872a451db8e036485c9f464b/998/256/{z}/{x}/{y}.png"));
 
 			
-		choropleth.svg = d3.select(map.getPanes().overlayPane).append("svg");
+		choropleth.svg = d3.select(choropleth.map.getPanes().overlayPane).append("svg");
 		choropleth.g = choropleth.svg.append("g").attr("class", "leaflet-zoom-hide counties");
 
-		var bounds = [[-174.756436222, 17.467543002],[-66.949091003, 69.002433285]];
-		path = d3.geo.path().projection(project);
+		var bounds = [[-171.756436222, 18.467543002],[-66.949091003, 72.002433285]];
+		path = d3.geo.path().projection(choropleth.project);
 
 		feature=choropleth.g.selectAll("path")
 			.data(topojson.feature(choropleth.us, choropleth.us.objects.counties).features)
@@ -292,14 +323,14 @@ var choropleth = {
 			.attr('opacity',function(d){ if(d.id.toString().length == 2){return 0;}else{return choropleth.opacity;}})
 			.attr("stroke-width",choropleth.foreignHighlights)
 			.on("mouseover", function(d) { d3.select("#hover").html('County: '+countName(d.id)+'<br>Tons (thousands): '+(choropleth.rateById.get(d.id)/1000).toFixed(2)); });
-		map.on("viewreset", reset);
+		choropleth.map.on("viewreset", reset);
 		reset();
 		choropleth.setLegend();
 		// Reposition the SVG to cover the features.
 		function reset() {
 			
-			var bottomLeft = project(bounds[0]),
-				topRight = project(bounds[1]);
+			var bottomLeft = choropleth.project(bounds[0]),
+				topRight = choropleth.project(bounds[1]);
 				
 			choropleth.svg.attr("width", topRight[0] - bottomLeft[0])
 				.attr("height", bottomLeft[1] - topRight[1])
@@ -310,16 +341,13 @@ var choropleth = {
 			feature.attr("d", path);
 
 		}
-
-		function project(x) {
-			
-			var point = map.latLngToLayerPoint(new L.LatLng(x[1], x[0]));
-			return [point.x, point.y];
-		}
-		
-		
 		
 		loader.run();
+	},
+	project : function(x) {
+			
+			var point = choropleth.map.latLngToLayerPoint(new L.LatLng(x[1], x[0]));
+			return [point.x, point.y];
 	},
 	updateMap : function() {
 
@@ -339,24 +367,17 @@ var choropleth = {
 		loader.run();
 	},
 	foreignHighlights: function(d){
-		if(d.id == "24510"){
-			console.log(choropleth.numThreshold.range,choropleth.numThreshold.domain)
-			console.log("24510",choropleth.rateById.get(d.id));
-		}
 		var output = false
 		if(!isNaN(choropleth.rateById.get(d.id))){
 			if(choropleth.numThreshold(choropleth.rateById.get(d.id)) > 0){
-				//console.log('goodbye');
 				if(choropleth.settings.orig_or_dest == 'orig_fips'){//exports
 					choropleth.exports.forEach(function(ex){
-						//console.log(d.id,ex.fips)
 						if(ex.fips == d.id){
 							output= true;
 						}
 					})
 				}else if(choropleth.settings.orig_or_dest == 'dest_fips'){//imports
 					choropleth.imports.forEach(function(im){
-						//console.log(d.id,im.fips)
 						if(im.fips == d.id){
 							
 							output = true;
@@ -367,21 +388,16 @@ var choropleth = {
 			}
 		}	
 		if(output){
-			console.log('yep');
 			return "#0f0";
 		}else{
 			return "#000";
 		}
 	},
 	foreignHighlightsWidth: function(d){
-		//console.log('hello',d);
-		console.log();
 		var output = false
 		if(choropleth.numThreshold(choropleth.rateById.get(d.id)) > 0){
-			//console.log('goodbye');
 			if(choropleth.settings.orig_or_dest == 'orig_fips'){//exports
 				choropleth.exports.forEach(function(ex){
-					//console.log(d.id,ex.fips)
 					if(ex.fips == d.id){
 						
 						output= true;
@@ -389,7 +405,6 @@ var choropleth = {
 				})
 			}else if(choropleth.settings.orig_or_dest == 'dest_fips'){//imports
 				choropleth.imports.forEach(function(im){
-					//console.log(d.id,im.fips)
 					if(im.fips == d.id){
 						
 						output = true;
@@ -400,7 +415,6 @@ var choropleth = {
 		}
 
 		if(output){
-			
 			return "3";
 		}else{
 			return "1";
@@ -414,13 +428,13 @@ var choropleth = {
 			choropleth.threshold.domain().forEach(function(d,i){
 				
 				if(i === 0){
-					legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i]+'"></rect></svg><span>&lt;= <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
+					legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i]+'"></rect></svg><span class="legend_text_output">&lt;= <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
 				}
 				else{
-					legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i]+'"></rect></svg><span><span data-var="'+numbers[i-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-format="%.2f"></span> - <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
+					legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i]+'"></rect></svg><span class="legend_text_output"><span data-var="'+numbers[i-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-format="%.2f"></span> - <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
 				}
 			});
-			legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][choropleth.threshold.domain().length]+'"></rect></svg><span>&gt; <span data-var="'+numbers[choropleth.threshold.domain().length-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-max=1000 data-format="%.2f"></span> tons</span></li>';
+			legendText += '<li><svg width="20" height="20"><rect width="300" height="100" fill="'+colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][choropleth.threshold.domain().length]+'"></rect></svg><span class="legend_text_output">&gt; <span data-var="'+numbers[choropleth.threshold.domain().length-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-max=1000 data-format="%.2f"></span> tons</span></li>';
 				
 			legendText +="</ul>";
 			$("#"+choropleth.legendContainer+"_info").html(legendText);
@@ -565,7 +579,9 @@ var toggles = {
 
 };
 
-
+//--------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------
 
 var loader = {
 	queue: [],
@@ -577,13 +593,8 @@ var loader = {
 	}
 };
 //--------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------
 // Helper Functions
 //--------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------
-
 function number_format(x){
 	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -602,24 +613,5 @@ function countName(inputId){
 	Utility function: populates the <FORM> with the SVG data
 	and the requested output format, and submits the form.
 */
-function submit_download_form(output_format)
-{
-	var doc = document.implementation.createHTMLDocument("");
-	doc.write($("#legend_info"));
-	html = (new XMLSerializer).serializeToString(doc);
-	console.log(html);
-	// Get the d3js SVG element
-	var tmp = $(".leaflet-overlay-pane");
-	var svg = $(".leaflet-overlay-pane svg");
-	// Extract the data as SVG text string
-	var svg_xml = (new XMLSerializer()).serializeToString(svg);
-
-	// Submit the <FORM> to the server.
-	// The result will be an attachment file to download.
-	var form = document.getElementById("svgform");
-	form['output_format'].value = output_format;
-	form['data'].value = svg_xml ;
-	form.submit();
-}
 	
 

@@ -26,7 +26,7 @@ Cascading Style Sheets -->
 	<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script> 
 
     
-    <script type="text/javascript" src="../resources/src/choropleth.js"></script>
+    <script type="text/javascript" src="../resources/src/choropleth.min.js"></script>
 
 	<title>County Trade Visualization</title>
 </head>
@@ -58,14 +58,10 @@ Cascading Style Sheets -->
 <script>
 $(function(){ // on page load
 	var countyList = ['23001','23003','23005','23007','23009','23011','23013','23015','23017','23019','23021','23023','23025','23027','23029','23031'];
-	choropleth.settings.datasource = '/t2/data/get/getCountyToNation_ME.php';
+	choropleth.settings.datasource = 'http://availabs.org/t2/data/get/getCountyToNation_ME.php';
 	choropleth.legendContainer="legend-detail";
 	choropleth.init('map',countyList);
 })
 </script>
-<form id="svgform" method="post" action="download.pl">
- <input type="hidden" id="output_format" name="output_format" value="">
- <input type="hidden" id="data" name="data" value="">
-</form>
 </body>
 </html>

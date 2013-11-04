@@ -1,0 +1,795 @@
+<html><head><style>#markdown-wrapper {
+  margin: 0 auto;
+  overflow: auto;
+  width: 920px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#markdown-container {
+    display: block;
+    float: left;
+  clear: left;
+  margin-left: 5%;
+  margin-bottom: 40px;
+    width: 65%;
+    line-height: 1.6em;
+  font: 14px helvetica,arial,freesans,clean,sans-serif;
+    color:black; 
+}
+
+#markdown-outline {
+    float: right;
+  display: block;
+    position: fixed; 
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  font: 13px helvetica,arial,freesans,clean,sans-serif;
+  margin: 3% 3% 3% 0;
+    padding: 10px 5px 10px 5px;
+  width: 25%;
+  color: #555;
+  line-height: 1.4em;
+
+  border-radius: 0.5em;
+  -moz-border-radius: 0.5em;
+  -webkit-border-radius: 0.5em;
+}
+
+#markdown-outline ul {
+    margin: 5px 0 5px 0;
+    padding-left: 15px;
+    font-size: 13px; 
+}
+
+#markdown-outline ul:first-child {
+    border:none;
+}
+
+#markdown-backTop {
+    padding: 5px 5px 5px 5px;
+    width:20px;
+    height:20px;
+    background: url(images/top-icon.png) no-repeat 5px 5px;
+    cursor:pointer;
+}
+
+#markdown-backTop:hover {
+  background: #fff url(images/top-icon.png) no-repeat 5px 5px;
+}
+
+#markdown-raw {
+    padding:5px;
+    width:20px;
+    height:20px;
+    background:url(images/source-s-icon.png) no-repeat 5px 5px;
+    cursor:pointer;
+}
+
+#markdown-raw:hover {
+  background: #fff url(images/source-s-icon.png) no-repeat 5px 5px;
+}
+
+#markdown-bottom {
+    padding: 5px 5px 5px 5px;
+    width:20px;
+    height:20px;
+    background:url(images/bottom-icon.png) no-repeat 5px 5px;
+    cursor:pointer;
+}
+
+#markdown-bottom:hover {
+  background: #fff url(images/bottom-icon.png) no-repeat 5px 5px; 
+}
+
+#markdown-buttons-container {
+  position : fixed;
+  bottom: 0;
+  right: 0;
+  border: 1px solid rgb(236, 236, 236);
+  background: rgb(248, 248, 248);
+}
+
+@media print{
+    #markdown-container {
+      margin: 5%;
+      width: 90%;
+      font: 12pt Georgia, "Times New Roman", Times, serif;
+      line-height: 1.3;
+    }
+}
+
+@media screen and (max-width: 940px) {
+
+  #markdown-outline {
+    visibility: hidden;
+  }
+
+  #markdown-container {
+    width: 90%;
+  }
+
+  #markdown-wrapper {
+    width: auto;
+  }
+}
+
+body, html {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.md {
+  background-color: #eee;
+  border-radius:3px;
+  margin: 0;
+  padding:3px;
+}
+
+article {
+  padding: 3px0px;
+  border: 1px solid #cacaca;
+  background-color: white;
+}
+article > :first-child {
+  margin-top: 0!important;
+}
+
+h1 {
+  font-size:28px;
+  margin-bottom:10px;
+  color: black;
+}
+
+h2 {
+  font-size:24px;
+  margin:20px 0 10px;
+  color:    black;
+  border-bottom: 1px solid #ccc;
+}
+
+h3 {
+  font-size:18px;
+  margin-bottomn:20px 0 10px;
+}
+
+h4 {
+  font-size:16px;
+  font-weight:bold;
+  margin:20px 0 10px;
+}
+
+h5 {
+  font-size:14px;
+  font-weight:bold;
+  margin:20px 0 10pxx;
+}
+
+h6 {
+  color:#777;
+  font-size:14px;
+  font-weight:bold;
+  margin:20px 0 10px;
+}
+
+hr {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+  border: 0 none;
+  height: 4px;
+  margin: 15px 0;
+  paddingg: 0;
+}
+
+p {
+  margin: 15px 0; 
+}
+
+blockquote
+{
+  word-wrap: break-word;
+  border-left:4px solid #ddd;
+  padding-left:11px;
+  color:#555;
+  margin:14px 0;
+}
+
+table
+{
+  font-sizeze: 14px;
+  border-collapse:collapse;
+  margin:20px 0 0;
+  padding:0;
+}
+
+transparentable tr
+{
+  border-top:1px solid #ccc;
+  background-color:#fff;
+  margin:0;
+  padding:0;
+}
+
+table tr:nth-child(2n)
+{
+  background-color:#f8f8f8;
+}
+table tr th[align="center"], table tr td[align="center"] {
+  text-align:text-aligncenter;
+}
+table tr th, table tr td
+{
+  border:1px solid #ccc;
+  text-alignn:left;
+  margin:0;
+  padding:6px 13px;
+}
+
+ul, ol
+{
+  padding-left: 30px;
+}
+
+ul li, ol li
+{
+  margin-top:7px;
+  margin-bottom:7px;
+}
+
+a, a code {
+  color: #4183C4;
+  text-decoration:none;
+}
+
+p>code, li>code, td>code {
+  margin: 0 2px;
+  padding: 0 5px;
+  white-space: nowrap;
+  border: 1px solid #ddd;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+.shadow {
+  -webkit-border-radiusit-box-shadow:0 5px 15px #000;
+  -moz-box-shadow:0 5px 15px #000;
+  box-shadow:0 5px 15px #000;
+}
+
+a:link {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+a:hover, a:visited {
+  color: #4183c4;
+  text-decoration: underline;
+}
+
+.highlight pre, pre {
+  background-color:#f8f8f8;
+  border:1px solid #ccc;
+  font-size:13px;
+  line-height:12px9px;
+  overflow:auto;
+  border-radius:3px;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+}
+/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+
+pre code {
+  display: block; padding: 0.5em;
+  color: #333;
+  background: #f8f8ff
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+</style></head><body><div id="markdow-wrapper"><div id="markdown-container"><h1 id="0">EDR Commodity Flow Visualizations</h1>
+<p>These tools support so-called &quot;modern browsers&quot;, which generally means everything except IE8 and below.</p>
+<h2 id="1">Choropleth Maps</h2>
+<p>To use choropleth maps simply include choropleth.0.1.0.min.js in your project along with its dependencies.</p>
+<h3 id="2">Dependencies</h3>
+<p>d3js - Javascript Visualization &amp; Mapping Library</p>
+<p>topojson - Geographic Data Storage and Simplification</p>
+<p>tangle + tanglekit - Interactive Documents Engine</p>
+<p>dataTables - Table generation and Download</p>
+<p>All dependencies can be found in the resources folder.
+See <code>examples/choropleth/choropleth-template.html</code> for an html template for choropleth maps.</p>
+<h2 id="3">Gettings Started</h2>
+<p> This template is all the code required for creating a choropleth map. The template includes no css for page formatting so it can be easily integrated with any stylesheet. To view the AVAIL styled choropleth map take a look in the /choropleth folder for page layout and css.</p>
+<pre><code class="html">&lt;html&gt;
+&lt;head&gt;
+    &lt;!-- Meta Data --&gt;  
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+    &lt;meta name="description" content="description"&gt;
+    &lt;meta name="keywords" content="keywords"&gt;
+
+    &lt;!-- Cascading Style Sheets --&gt;
+    &lt;link rel="stylesheet" href="../../resources/css/choropleth.css" type="text/css"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="../../resources/css/leaflet.css" /&gt;
+    &lt;link rel="stylesheet" href="../../resources/css/TangleKit.css" type="text/css"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="../../resources/css/jquery.dataTables.css" /&gt;  
+
+    &lt;!-- Javascript Includes --&gt;
+    &lt;script type="text/javascript" src="../../resources/js/jquery-1.9.1.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="../../resources/js/d3.v3.min.js"&gt;&lt;/script&gt;  
+    &lt;script type="text/javascript" src="../../resources/js/leaflet.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="../../resources/js/queue.v1.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="../../resources/js/topojson.v1.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="../../resources/js/colorbrewer.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="../../resources/js/tangle.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src='../../resources/js/jquery.dataTables.min.js'&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src='../../resources/js/TableTools.min.js'&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"&gt;&lt;/script&gt; 
+
+
+    &lt;script type="text/javascript" src="../../resources/src/choropleth.js"&gt;&lt;/script&gt;
+
+    &lt;title&gt;Choropleth Simple&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="width:901px;margin:0 auto;"&gt;Choropleth Containers
+        &lt;div id="map" style="width:900px;height:600px;"&gt;&lt;/div&gt;
+        &lt;div id="county_select"&gt;&lt;/div&gt;
+        &lt;div id="mode_select"&gt;&lt;/div&gt;
+        &lt;div id="commodity_select"&gt;&lt;/div&gt;
+        &lt;div id="orig_or_dest_select"&gt;&lt;/div&gt;
+        &lt;div id="hover"&gt;&lt;/div&gt;
+        &lt;div id="legend"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+&lt;script&gt;
+$(function(){ // on page load
+    var countyList = ['23001','23003','23005','23007','23009','23011','23013','23015','23017','23019','23021','23023','23025','23027','23029','23031'];
+    choropleth.settings.fips = '23001';
+    choropleth.settings.datasource = 'http://vis.availabs.org/t2/data/get/getCountyToNation_ME.php';
+    choropleth.init('map',countyList);
+})
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h3 id="4">choropleth.init(container,counties)</h3>
+<p>To create a blank choropleth map, pass the element ID to its constructor and the list of counties you wish to be able to visualize.</p>
+<h3 id="5">choropleth.settings</h3>
+<p>Choropleth settings is a JSON object which tells the map where to get data. The default values are :</p>
+<p><code>settings : {datasource:'',sctg : '00' , mode : '00' , orig_or_dest : 'dest_fips' , fips : '27137'}</code></p>
+<p>before initializing the maps you must at least set choropleth.settings.datasource as in the example above.</p>
+<p>Each individual setting is passed in a POST request to the datasource url to specify what data it should return.See `data/get/getCountytoNation.php' to see how its parsed.</p>
+<h5 id="6">settings.datasource</h5>
+<p>The datasource is the URL of the page which provides data. If it remains unset the map will load blank. 
+example</p>
+<pre><code class="javascript">choropleth.settings.datasource = <span class="string">'http://vis.availabs.org/t2/data/get/getCountyToNation.php'</span>
+choropleth.init(<span class="string">'map'</span>);</code></pre>
+<p>Because all of the rest of the settings are default this will load a map of import flows for county 27137 (St Louis County Minnesota), for all commodities, for all modes of transportation. </p>
+<h5 id="7">settings.sctg</h5>
+<p>sctg sets the commidty code that is queried for. Must be a two character string.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Value</th>
+<th style="text-align:left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">"00"</td>
+<td style="text-align:left">All Commodities</td>
+</tr>
+<tr>
+<td style="text-align:right">"01"</td>
+<td style="text-align:left">Live animals/fish</td>
+</tr>
+<tr>
+<td style="text-align:right">"02"</td>
+<td style="text-align:left">Cereal grains</td>
+</tr>
+<tr>
+<td style="text-align:right">"03"</td>
+<td style="text-align:left">Other ag prods.</td>
+</tr>
+<tr>
+<td style="text-align:right">"04"</td>
+<td style="text-align:left">Animal feed</td>
+</tr>
+<tr>
+<td style="text-align:right">"05"</td>
+<td style="text-align:left">Meat/seafood</td>
+</tr>
+<tr>
+<td style="text-align:right">"06"</td>
+<td style="text-align:left">Milled grain prods.</td>
+</tr>
+<tr>
+<td style="text-align:right">"07"</td>
+<td style="text-align:left">Other foodstuffs</td>
+</tr>
+<tr>
+<td style="text-align:right">"08"</td>
+<td style="text-align:left">Alcoholic beverages</td>
+</tr>
+<tr>
+<td style="text-align:right">"09"</td>
+<td style="text-align:left">Tobacco prods.</td>
+</tr>
+<tr>
+<td style="text-align:right">"10"</td>
+<td style="text-align:left">Building stone</td>
+</tr>
+<tr>
+<td style="text-align:right">"11"</td>
+<td style="text-align:left">Natural sands</td>
+</tr>
+<tr>
+<td style="text-align:right">"12"</td>
+<td style="text-align:left">Gravel</td>
+</tr>
+<tr>
+<td style="text-align:right">"13"</td>
+<td style="text-align:left">Nonmetallic minerals</td>
+</tr>
+<tr>
+<td style="text-align:right">"14"</td>
+<td style="text-align:left">Metallic ores</td>
+</tr>
+<tr>
+<td style="text-align:right">"15"</td>
+<td style="text-align:left">Coal</td>
+</tr>
+<tr>
+<td style="text-align:right">"16"</td>
+<td style="text-align:left">Crude petroleum</td>
+</tr>
+<tr>
+<td style="text-align:right">"18"</td>
+<td style="text-align:left">Gasoline</td>
+</tr>
+<tr>
+<td style="text-align:right">"19"</td>
+<td style="text-align:left">Fuel oils</td>
+</tr>
+<tr>
+<td style="text-align:right">"20"</td>
+<td style="text-align:left">Basic chemicals</td>
+</tr>
+<tr>
+<td style="text-align:right">"21"</td>
+<td style="text-align:left">Pharmaceuticals</td>
+</tr>
+<tr>
+<td style="text-align:right">"22"</td>
+<td style="text-align:left">Fertilizers</td>
+</tr>
+<tr>
+<td style="text-align:right">"23"</td>
+<td style="text-align:left">Chemical prods.</td>
+</tr>
+<tr>
+<td style="text-align:right">"24"</td>
+<td style="text-align:left">Plastics/rubber</td>
+</tr>
+<tr>
+<td style="text-align:right">"25"</td>
+<td style="text-align:left">Logs</td>
+</tr>
+<tr>
+<td style="text-align:right">"26"</td>
+<td style="text-align:left">Wood prods.</td>
+</tr>
+<tr>
+<td style="text-align:right">"27"</td>
+<td style="text-align:left">Newsprint/paper</td>
+</tr>
+<tr>
+<td style="text-align:right">"28"</td>
+<td style="text-align:left">Paper articles</td>
+</tr>
+<tr>
+<td style="text-align:right">"29"</td>
+<td style="text-align:left">Printed prods.</td>
+</tr>
+<tr>
+<td style="text-align:right">"30"</td>
+<td style="text-align:left">Textiles/leather</td>
+</tr>
+<tr>
+<td style="text-align:right">"31"</td>
+<td style="text-align:left">Nonmetal min. prods.</td>
+</tr>
+<tr>
+<td style="text-align:right">"32"</td>
+<td style="text-align:left">Base metals</td>
+</tr>
+<tr>
+<td style="text-align:right">"33"</td>
+<td style="text-align:left">Articles-base metal</td>
+</tr>
+<tr>
+<td style="text-align:right">"34"</td>
+<td style="text-align:left">Machinery</td>
+</tr>
+<tr>
+<td style="text-align:right">"35"</td>
+<td style="text-align:left">Electronics</td>
+</tr>
+<tr>
+<td style="text-align:right">"36"</td>
+<td style="text-align:left">Motorized vehicles</td>
+</tr>
+<tr>
+<td style="text-align:right">"37"</td>
+<td style="text-align:left">Transport equip.</td>
+</tr>
+<tr>
+<td style="text-align:right">"38"</td>
+<td style="text-align:left">Precision instruments</td>
+</tr>
+<tr>
+<td style="text-align:right">"39"</td>
+<td style="text-align:left">Furniture</td>
+</tr>
+<tr>
+<td style="text-align:right">"40"</td>
+<td style="text-align:left">Misc. mfg. prods.</td>
+</tr>
+<tr>
+<td style="text-align:right">"41"</td>
+<td style="text-align:left">Waste/scrap</td>
+</tr>
+<tr>
+<td style="text-align:right">"43"</td>
+<td style="text-align:left">Mixed freight</td>
+</tr>
+<tr>
+<td style="text-align:right">"99"</td>
+<td style="text-align:left">Unknown</td>
+</tr>
+</tbody>
+</table>
+<h5 id="8">settings.mode</h5>
+<p>mode sets the mode of transportation that is queried for. </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Value</th>
+<th style="text-align:left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">"00"</td>
+<td style="text-align:left">All Modes</td>
+</tr>
+<tr>
+<td style="text-align:right">"1"</td>
+<td style="text-align:left">Truck</td>
+</tr>
+<tr>
+<td style="text-align:right">"2"</td>
+<td style="text-align:left">Rail</td>
+</tr>
+<tr>
+<td style="text-align:right">"3"</td>
+<td style="text-align:left">Water</td>
+</tr>
+<tr>
+<td style="text-align:right">"5"</td>
+<td style="text-align:left">Air</td>
+</tr>
+<tr>
+<td style="text-align:right">"6"</td>
+<td style="text-align:left">Pipeline</td>
+</tr>
+<tr>
+<td style="text-align:right">"7"</td>
+<td style="text-align:left">Other/Unkown</td>
+</tr>
+</tbody>
+</table>
+<h5 id="9">settings.orig_or_dest</h5>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Value</th>
+<th style="text-align:left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">"dest_fips"</td>
+<td style="text-align:left">Import Flows</td>
+</tr>
+<tr>
+<td style="text-align:right">"orig_fips"</td>
+<td style="text-align:left">Export Flows</td>
+</tr>
+</tbody>
+</table>
+<h5 id="10">settings.fips</h5>
+<p>This specifies which county is being queried for. This setting will also make that county appear in red on the map.</p>
+<h5 id="11">Container Naming Conflicts</h5>
+<p>  As you can see in the example a number of aspects of the choropleth map need their own div containers to be rendered onto the page. These are the default element ids that are used as containers:</p>
+<pre><code>    legendContainer:'legend',
+    countySelectContainer:'county_select',
+    commoditySelectContainer:'commodity_select',
+    modeSelectContainer:'mode_select',
+    origOrDestSelectContainer:'orig_or_dest_select',
+    flowTableContainer:'flow_data',</code></pre>
+<p> however if you have a naming conflict with one of these containers you can change the contianer name before calling choropleth.init() by simply setting the property to a new container name for example</p>
+<pre><code class="javascript">  choropleth.legendContainer = <span class="string">'legend-display'</span>;</code></pre>
+<p> The container names refer to the element ID and do not required the jquery style # selector. The matching element for this above example would look like this:</p>
+<pre><code class="html">&lt;div id='legend-display'&gt;&lt;/div&gt;</code></pre>
+<h2 id="12">Data Source Data Format</h2>
+<p>The choropleth class accesses the data source with the following call:</p>
+<pre><code class="javascript">        $.ajax({url:choropleth.settings.datasource, 
+            type : <span class="string">'POST'</span>,
+            data:choropleth.settings,
+            dataType:<span class="string">'json'</span>,
+            async:<span class="literal">false</span>
+        })</code></pre>
+<p>however this is done behind the scenes and this isn't required in setting up the maps.</p>
+<p>The data source must return a JSON object of the following format:</p>
+<pre><code class="json">{
+    "<span class="attribute">map</span>": <span class="value">[
+        {
+            "<span class="attribute">fips</span>": <span class="value"><span class="string">"27137"</span></span>,
+            "<span class="attribute">tons</span>": <span class="value"><span class="string">"710.5506406377215"</span>
+        }</span>,
+        {
+            "<span class="attribute">fips</span>": <span class="value"><span class="string">"55031"</span></span>,
+            "<span class="attribute">tons</span>": <span class="value"><span class="string">"195.67821738555554"</span>
+        }</span>,
+        ...
+    ]
+}</span></code></pre>
+<h2 id="13">Data Processing</h2>
+<p> While any data which is returned in the above format will work for generating choropleth maps, here is the approach that we took in processing the data that was sent to us for these projects. All sql code has been tested on MySQL mysql Ver 14.14 Distrib 5.5.34 &amp; Ver 14.14 Distrib 5.5.29.</p>
+<h5 id="14">1 - Create a table for the state data.</h5>
+<pre><code class="sql">
+delimiter $$
+<span class="operator"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`tbl_maine_domestic_db`</span> (
+  <span class="string">`dms_orig`</span> <span class="keyword">varchar</span>(<span class="number">45</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,
+  <span class="string">`dms_orig_fips`</span> <span class="keyword">varchar</span>(<span class="number">45</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,
+  <span class="string">`dms_dest`</span> <span class="keyword">varchar</span>(<span class="number">45</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,
+  <span class="string">`dms_dest_fips`</span> <span class="keyword">varchar</span>(<span class="number">45</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,
+   <span class="string">`dms_mode`</span> <span class="keyword">varchar</span>(<span class="number">45</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,
+  <span class="string">`sctg2`</span> <span class="keyword">varchar</span>(<span class="number">45</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,
+  <span class="string">`value_2010`</span> <span class="keyword">float</span> <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,
+  <span class="string">`curval_2010`</span> <span class="keyword">float</span> <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,
+  <span class="string">`tons_2010`</span> <span class="keyword">float</span> <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,
+  <span class="keyword">KEY</span> <span class="string">`orig`</span> (<span class="string">`dms_orig_fips`</span>),
+  <span class="keyword">KEY</span> <span class="string">`dest`</span> (<span class="string">`dms_dest_fips`</span>),
+  <span class="keyword">KEY</span> <span class="string">`orig-dest`</span> (<span class="string">`dms_dest_fips`</span>,<span class="string">`dms_orig_fips`</span>),
+  <span class="keyword">KEY</span> <span class="string">`mode`</span> (<span class="string">`dms_mode`</span>),
+  <span class="keyword">KEY</span> <span class="string">`scgt`</span> (<span class="string">`sctg2`</span>)
+) ENGINE=InnoDB <span class="keyword">DEFAULT</span> CHARSET=utf8$$</span></code></pre>
+<h5 id="15">2 - Import from CSV using mysqlimport (command line)</h5>
+<pre><code class="BASH">mysqlimport  --ignore-lines=1 --fields-terminated-by=, --fields-enclosed-by=\" --columns='dms_orig,dms_orig_fips,dms_dest,dms_dest_fips,dms_mode,sctg2,value_2010,curval_2010,tons_2010' --local -u root -p tredis tbl_maine_domestic_db.csv\</code></pre>
+<p>note, the name of the file you are importing MUST be the same as the name of the table you created in step one.</p>
+<h5 id="16">3 - Create County Tables</h5>
+<p>  We found on our hardware that querying a single state table for the data needed in the choropleth map was too slow to be usable for this project. To speed up queries we broke out the state table into individual county tables. To do this we create a table formatted exactly the same as the state stable and named with a 5 digit county fips code. Then ran the following query for each table</p>
+<pre><code>$sql ="insert into `".$state_fips.$county_fips."` select dms_orig_fips,dms_dest_fips,dms_mode,sctg2,curval_2010,tons_2010 from tbl_corrected_maine_domestic where dms_orig_fips = $fips or dms_dest_fips = $fips";</code></pre>
+<p>  See data/create/createCountyTable.php for the script we used to create all the county tables for a state at once.</p>
+<h2 id="17">Serving the Data</h2>
+<p>   The script used to serve the data recieves all of the variable in choropleth settings as POST variables and uses them to query the appropriate FIPS table for the correct commodity, mode and flow direction. See data/get/getCountyToNation_ME.php for our php code. This being under 50 lines of code should be easy to translate into your server side language of choice</p>
+</div><div id="markdown-outline" style="left: 1096px; overflow-y: auto; max-height: 404px;"><ul><li><a href="#0">EDR Commodity Flow Visualizations</a></li><ul><li><a href="#1">Choropleth Maps</a></li><ul><li><a href="#2">Dependencies</a></li></ul><li><a href="#3">Gettings Started</a></li><ul><li><a href="#4">choropleth.init(container,counties)</a></li><li><a href="#5">choropleth.settings</a></li><ul><ul><li><a href="#6">settings.datasource</a></li><li><a href="#7">settings.sctg</a></li><li><a href="#8">settings.mode</a></li><li><a href="#9">settings.orig_or_dest</a></li><li><a href="#10">settings.fips</a></li><li><a href="#11">Container Naming Conflicts</a></li></ul></ul></ul><li><a href="#12">Data Source Data Format</a></li><li><a href="#13">Data Processing</a></li><ul><ul><ul><li><a href="#14">1 - Create a table for the state data.</a></li><li><a href="#15">2 - Import from CSV using mysqlimport (command line)</a></li><li><a href="#16">3 - Create County Tables</a></li></ul></ul></ul><li><a href="#17">Serving the Data</a></li></ul></ul></div></div><div id="markdown-buttons-container"><div id="markdown-backTop" onclick="window.scrollTo(0,0);"></div><div id="markdown-raw" onclick="window.location='view-source:' + window.location.href;"></div><div id="markdown-bottom" onclick="window.scrollTo(0, document.body.scrollHeight);"></div></div></body></html>

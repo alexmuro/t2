@@ -16,7 +16,7 @@ tangle + tanglekit - Interactive Documents Engine
 dataTables - Table generation and Download
 
 All dependencies can be found in the resources folder.
-See `examples/choropleth/choropleth-simple.html` for an html template for choropleth maps.
+See `examples/choropleth/choropleth-template.html` for an html template for choropleth maps.
 
 
 ##Gettings Started##

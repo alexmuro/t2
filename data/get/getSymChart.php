@@ -24,7 +24,7 @@
 		$mode_clause = " and mode = '$mode' ";
 	}
 
-	include '../../config/db.php'; 
+	include '../config/db.php'; 
 	$test = new db();
 
 	$colors=array('#E41A1C','#FFFF33','#FF7F00','#999999','#984EA3','#377EB8','#4DAF4A','#F781BF');
