@@ -1,26 +1,11 @@
 @import url(../../resources/css/chord_chart.css);
 
-.county {
-  fill: #eee;
-  z-index:-1;
-}
 
 .county:hover {
   fill: orange;
 }
 
-.county-border {
-  fill: none;
-  stroke: #777;
-  pointer-events: none;
-}
 
-path.arc {
-  pointer-events: none;
-  fill: none;
-  stroke: #000;
-  display: none;
-}
 
 path.cell {
   fill: none;

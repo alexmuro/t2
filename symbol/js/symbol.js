@@ -1,5 +1,5 @@
 var symbol = {
-	map : '../data/MN_Counties.topojson',
+	map : {},
 	countySelectContainer:'county_select',
 	commoditySelectContainer:'commodity_select',
 	modeSelectContainer:'mode_select',
@@ -7,7 +7,7 @@ var symbol = {
 	flowTableContainer:'flow_data',
 	sumTableContainer:'sum_data',
 	mapContainer:'map',
-	settings : {datasource:'',sctg:'00',mode:"00",granularity:'10',orig_or_dest:'orig_fips' },
+	settings : {datasource:'',sctg:'00',mode:"00",granularity:'3',orig_or_dest:'orig_fips' },
 	map : {},
 	flowData : [],
 	linksByOrigin : {},
@@ -22,10 +22,12 @@ var symbol = {
     arc: {},
     quantize: {},
     locationByCounty : {},
+    cells: {},
     counties:[],
     width: 700,
     height : 740,
     positions : [],
+    simplePositions:[],
     hubs : [],
     init:function(counties){
     	console.log('init');
@@ -36,6 +38,7 @@ var symbol = {
 		loader.push(symbol.drawCounties);
 		loader.push(symbol.loadFlowData);
 		loader.push(symbol.drawCentroids);
+		loader.push(symbol.drawArcs);
 		loader.run();
     },
     loadFlowData: function(){
@@ -142,6 +145,9 @@ var symbol = {
 
 	},
 	drawCounties: function(){
+		//initialize the map
+		//draw the counties passed to init
+
 		symbol.us.objects.display = {};
 		symbol.us.objects.display.type ="GeometryCollection";
 		symbol.us.objects.display.geometries =  [];
@@ -160,36 +166,38 @@ var symbol = {
 			center: centroid,//[37.8, -96.9],
 			zoom: 6,
 			attributionControl:false
-		}).addLayer(new L.TileLayer("http://{s}.tile.cloudmade.com/117aaa97872a451db8e036485c9f464b/998/256/{z}/{x}/{y}.png"));;
+		});//.addLayer(new L.TileLayer("http://{s}.tile.cloudmade.com/117aaa97872a451db8e036485c9f464b/998/256/{z}/{x}/{y}.png"));
 
 		symbol.svg = d3.select(symbol.map.getPanes().overlayPane).append("svg");
 		symbol.g = symbol.svg.append("g").attr("class", "leaflet-zoom-hide counties");
 
 		symbol.bounds = d3.geo.bounds(display);
-		path = d3.geo.path().projection(symbol.project);
+		symbol.path = d3.geo.path().projection(symbol.project);
 		
 		symbol.feature = symbol.g.selectAll("path")
 			.data(display.features)
 		.enter()
 			.append("path")
 			.attr("class", "county")
-			.attr("d", path)
-			.attr("fill","#fff")
+			.attr("d", symbol.path)
+			.attr("fill","#eee")
 			.attr("stroke","#000")
 
 		symbol.svg.selectAll("path")
 			    .each(function(d){
-			    	latlong = getCentroid(d3.select(this));
-			    	symbol.positions.push(latlong);
-			      	hub = {};
-			      	hub['id'] = d.id;
-			      	if(typeof d.properties != 'undefined'){
-			      	  	hub['name'] = d.properties.id;
+			    	//console.log(d3.geo.centroid(d));
+			    	if(latlong = d3.geo.centroid(d)){
+				    	symbol.positions.push(latlong);
+				    	hub = {};
+				      	hub['id'] = d.id;
+				      	if(typeof d.properties != 'undefined'){
+				      	  	hub['name'] = d.properties.id;
+				      	}
+				      	hub['latitude'] = latlong[0];
+				      	hub['longitude'] = latlong[1];
+				      	symbol.locationByCounty[d.id] = latlong; 
+				      	symbol.hubs.push(hub);
 			      	}
-			      	hub['latitude'] = latlong[0];
-			      	hub['longitude'] = latlong[1];
-			      	symbol.locationByCounty[d.id] = latlong; 
-			      	symbol.hubs.push(hub);
 			    });
 			
 
@@ -200,33 +208,77 @@ var symbol = {
 	},
 	drawCentroids: function(){
 
-		// symbol.circles = symbol.svg.append("g")
-		// 	.attr("class", "leaflet-zoom-hide")
-		// 	.attr("id", "circles")
-		// 	.attr("style","z-index:13;");
 		symbol.g.selectAll("circle").remove();
 		symbol.circles = symbol.g.selectAll("circle")
 		      .data(symbol.hubs)
 		    .enter()
 		    	.append("svg:circle")
-			    .attr("cx", function(d, i) { return symbol.positions[i][0]; })
-			    .attr("cy", function(d, i) { return symbol.positions[i][1]; })
+			    .attr("cx", function(d, i) { if(symbol.positions[i]){return symbol.project(symbol.positions[i])[0];} })
+			    .attr("cy", function(d, i) { if(symbol.positions[i]){return symbol.project(symbol.positions[i])[1];} })
 			    .attr("r", function(d, i) {
 			    	
-			    	//console.log(d,symbol.countByDest[d.id]);//symbol.quantize(symbol.countByDest[d.id]*1));
 			    	if(isNaN(symbol.quantize(symbol.countByDest[d.id]*1))){ return 1;}
 			    	else { return symbol.quantize(symbol.countByDest[d.id]*1)}
-			      	// if(orig_or_dest == 'orig_fips'){
-			      	// 	return Math.sqrt(countByOrig[d.id]/divisor) || 1; 
-			      	// }
-			      	// 	else{ 
-			      	// 		return Math.sqrt(countByDest[d.id]/7) || 1;
-			      	// } 
+			      	 
 			    })
 		    .sort(function(a, b) { return symbol.countByOrig[b.id] - symbol.countByOrig[a.id]; });
 		    symbol.reset();
 		    //console.log();
 		    loader.run();
+
+	},
+	drawArcs : function(){
+
+		symbol.arc = d3.geo.greatArc()
+  			.source(function(d) { return symbol.locationByCounty[d.source]; })
+		    .target(function(d) { return symbol.locationByCounty[d.target]; });
+	
+		symbol.positions.forEach(function(d){
+			if(typeof d !== 'undefined'){
+				symbol.simplePositions.push(symbol.project(d));
+			}
+
+		})
+		
+		var polygons = d3.geom.voronoi(symbol.simplePositions);
+		symbol.cells = symbol.svg.append("svg:g")
+		    .attr("id", "cells")
+		    .attr("class", "leaflet-zoom-hide")
+		    
+
+		symbol.g_cells = symbol.cells.selectAll("g")
+		    .data(symbol.hubs)
+		    .enter().append("svg:g").attr("class",function(d){return "county_" + d.id});
+		
+		symbol.veronoi =symbol.g_cells.append("svg:path")
+		    .attr("id", function(d){return "county_" + d.id})
+		    .attr("class", "cell")
+		    .attr("fill","none")
+		    .attr("pointer-events","all")
+		    .attr("d", function(d, i) { 
+		    	if (polygons[i]) { 
+		  			return "M" + polygons[i].join("L") + "Z";
+		    	 }
+		   	})
+		    .on("click", function(d, i) {
+
+		        d3.select("h2 span").html(countName(d.id));
+		        symbol.g_cells.selectAll("path.arc").remove();
+		        symbol.g_cells.selectAll("path.arc")
+		        	.data(symbol.linksByOrigin[d.id])
+		        	.enter().append("svg:path")
+		        	.attr("class", "arc")
+		     		.attr("stroke-width", function(d){
+				      })
+		      		.attr("d", function(d) {
+		      			return symbol.path(symbol.arc(d)); 
+			    	});
+
+		    });
+ 		symbol.reset();
+		loader.run();
+	},
+	drawData : function(fips){
 
 	},
 	drawMap : function(flow_data,orig_or_dest){
@@ -326,14 +378,8 @@ var symbol = {
 		        }
 		        var county = d3.selectAll(".county_"+d.id);
 		        county.attr("class","county_"+d.id+" lines");
-		        //$("#county_"+d.id+".parentNode").addClass('lines');
-		        //console.log($("#county_"+d.id).node().parentNode);
-
-		        // $("#county_"+d.id).parent().find('.arc').each(function(){
-		          
-		        //   console.log($(this))})
-		        // console.log($("#county_"+d.id).parent().find('.arc'));
-	          	var url = '../data/get/getSymChart.php';
+		        
+		        var url = '../data/get/getSymChart.php';
 	          	commodity = $("#commodity_select").val();
 	          	mode = $("#mode_select").val();
 	          	granularity = $("#granularity_select").val();
@@ -345,9 +391,8 @@ var symbol = {
 	          		dataType:'json',async:true, 
 	          		beforeSend: function(){$('#data').html("Loading data for "+countName(fips));}
 				})
-		            .done(function(data) {
-		                  drawTable(data); })
-		                .fail(function(data) { console.log(data.responseText) });
+		        .done(function(data) { drawTable(data); })
+		        .fail(function(data) { console.log(data.responseText) });
 		        d3.select("h2 span").html(d.name);
 		        display = [];
 
@@ -474,56 +519,76 @@ var symbol = {
 			            for(var tons in linksByOrigin[d.source]){
 			            //console.log(linksByOrigin[d.source][source].tons)
 			            if (linksByOrigin[d.source][tons].tons > max){
-			              max = linksByOrigin[d.source][tons].tons
-
-			              //console.log(i,"spaaace", max)
-
+			              max = linksByOrigin[d.source][tons].tons;
 			            }
 			            linequantize = d3.scale.sqrt()
 							.domain([0,max])
 							.range([0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30]);
-
+						console.log('?',max,linequantize(d.tons));
 			            if(isNaN(linequantize(d.tons))) {return 1;}
 			            else {return linequantize(d.tons);}
 			        }
 			})
 	},
 	project: function(x) {
-			
 		var point = symbol.map.latLngToLayerPoint(new L.LatLng(x[1], x[0]));
 		return [point.x, point.y];
 	},
 	reset: function () {
 			var bottomLeft = symbol.project(symbol.bounds[0]),
 				topRight = symbol.project(symbol.bounds[1]);
-				
+				topRight[1]=0;
+				bottomLeft[0] =0
+
 			symbol.svg.attr("width", topRight[0] - bottomLeft[0])
 				.attr("height", bottomLeft[1] - topRight[1])
 				.style("margin-left", bottomLeft[0] + "px")
 				.style("margin-top", topRight[1] + "px");
 			symbol.g.attr("transform", "translate(" + -bottomLeft[0] + "," + -topRight[1] + ")");
-			//symbol.circles.attr("transform", "translate(" + -bottomLeft[0] + "," + -topRight[1] + ")");
-			
+			if(!is_empty(symbol.cells)){
+				symbol.cells.attr("transform", "translate(" + -bottomLeft[0] + "," + -topRight[1] + ")");
+			}
+
             symbol.feature
-              .attr("d", path);
+              .attr("d", symbol.path);
 
             symbol.positions = [];
 			    	
             symbol.svg.selectAll("path")
 			    .each(function(d){
-			    	latlong = getCentroid(d3.select(this));
+			    	latlong = d3.geo.centroid(d);
 			    	symbol.positions.push(latlong);
 			    }); 
 
 			if(!is_empty(symbol.circles)){
-	        	//console.log(symbol.circles);
-	            symbol.circles 
-	              .attr("cx", function(d,i) {
-	              	return symbol.positions[i][0]
-	              })
-	              .attr("cy", function(d,i) {
-	                return symbol.positions[i][1]; 
-	              });
+	        	symbol.circles 
+	            	.attr("cx", function(d, i) { if(symbol.positions[i]){return symbol.project(symbol.positions[i])[0];} })
+			    	.attr("cy", function(d, i) { if(symbol.positions[i]){return symbol.project(symbol.positions[i])[1];} })
+          	}
+
+			
+
+          	if(!is_empty(symbol.veronoi)){
+          		symbol.simplePositions = [];
+      		
+				symbol.positions.forEach(function(d){
+					if(typeof d !== 'undefined'){
+						symbol.simplePositions.push(symbol.project(d));
+					}
+
+				});
+          		var polygons = d3.geom.voronoi(symbol.simplePositions);
+          		symbol.veronoi
+				    .attr("d", function(d, i) { 
+				    	if (polygons[i]) { 
+				  			return "M" + polygons[i].join("L") + "Z";
+				    	 }
+				   	})
+				symbol.g_cells.selectAll("path.arc")
+					.attr("d", function(d) {
+		      			return symbol.path(symbol.arc(d)); 
+			    	});
+
           	}
 
 	},
@@ -579,4 +644,28 @@ function is_empty(obj) {
     // Doesn't handle toString and toValue enumeration bugs in IE < 9
 
     return true;
+}
+
+function drawTable(data){
+    
+    var table = '<h3>Top Trade Destinations<br> by Mode &amp; Commodity</h3>';
+    table  = "<table id='dynTable'><thead><tr><td>Rank</td><td>County</td><td>Tons</td></tr></thead><tbody>";
+    $.each(data,function(d,v){
+         if(d <100){
+            table += "<tr><td>"+(d*1+1)+"&nbsp;&nbsp;</td><td>"+countName(v.orig*1)+"&nbsp;&nbsp;</td><td> "+(v.tons*1).toFixed(2)+"</td></tr>";
+        }
+    });
+    table += "</tbody></table>";
+    $('#data').html(table);
+     var $table = $('#dynTable');
+        $table.dataTable({
+          "bPaginate": true,
+          "numSorting": [[ 0, "asc" ]],
+          "aoColumns": [null,null,null],
+          "sDom": 'T<"clear">lfrtip',
+          "oTableTools": {
+              "sSwfPath": "../resources/swf/copy_csv_xls_pdf.swf"
+          }
+          
+      });
 }

@@ -12,7 +12,7 @@ index.html#
 <title>Symbol Map</title>
 
 <style>
-@import url(resources/css/chord_chart.css);
+@import url(../resources/css/chord_chart.css);
 
 .county {
   fill: #eee;
@@ -175,12 +175,12 @@ Granularity
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-<script src="resources/js/d3.v3.min.js"></script>
-<script src="resources/js/topojson.v1.min.js"></script>
+<script src="../resources/js/d3.v3.min.js"></script>
+<script src="../resources/js/topojson.v1.min.js"></script>
 <script>
 
 var  county_names = [];
-d3.json('data/us-county-names.json', function(error, counties){
+d3.json('../data/us-county-names.json', function(error, counties){
     county_names = counties;});
 
 function getCentroid(selection) {
@@ -373,7 +373,7 @@ function symbol_graph(map,flow_data,orig_or_dest)
           
         //   console.log($(this))})
         // console.log($("#county_"+d.id).parent().find('.arc'));
-              var url = 'data/get/getSymChart.php';
+              var url = '../data/get/getSymChart.php';
               commodity = $("#commodity_select").val();
               mode = $("#mode_select").val();
               granularity = $("#granularity_select").val();
@@ -458,11 +458,11 @@ function symbol_graph(map,flow_data,orig_or_dest)
 
 }
 
-var url = 'data/get/getCountyOrigDestFlow.php';
+var url = '../data/get/getCountyOrigDestFlow.php';
   $.ajax({url:url, type:'POST',data: { sctg:'00',mode:"00",granularity:'3',orig_or_dest:'orig_fips' },dataType:'json',async:true})
     .done(function(data) { 
        $('#heading_commidity').html($("#commodity_select").find(":selected").text());
-      symbol_graph("MN_Counties.topojson",data,'orig_fips');  
+      symbol_graph("../data/MN_Counties.topojson",data,'orig_fips');  
     })
     .fail(function(data) { console.log(data.responseText) });
 

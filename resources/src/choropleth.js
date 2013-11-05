@@ -57,13 +57,13 @@ var choropleth = {
 			var legend_html = $("#legend_info").html();
 			//console.log('test',legend_html);
 			//console.log(choropleth.project([-118.25,34.05])[0]);
-			legend_coords=[-100.25,15.05];
+			legend_coords=choropleth.project([-100.25,15.05]);
 
 			$('#tangle-legend li').each(function(i){
 				d3.select(".leaflet-overlay-pane svg")
 				.append("rect")
-				.attr("x",choropleth.project(legend_coords)[0])
-				.attr("y",(choropleth.project(legend_coords)[1]+30*(i)))
+				.attr("x",legend_coords[0])
+				.attr("y",(legend_coords[1]+30*(i)))
 				.attr("width","20px")
     			.attr("height","20px")
     			.attr("fill",colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i])
@@ -79,9 +79,6 @@ var choropleth = {
     			.text($(this).text().replace("drag","").replace("drag","") );
 			})
 			
-    			
-    				
-
 			var html = d3.select(".leaflet-overlay-pane svg")
 				.attr("title", "test2")
 				.attr("version", 1.1)

@@ -24,30 +24,6 @@ function countName(inputId){
 }
 
 
-function drawTable(data){
-    
-    var table = '<h3>Top Trade Destinations<br> by Mode &amp; Commodity</h3>';
-    table  = "<table id='dynTable'><thead><tr><td>Rank</td><td>County</td><td>Tons</td></tr></thead><tbody>";
-    $.each(data,function(d,v){
-         if(d <100){
-            table += "<tr><td>"+(d*1+1)+"&nbsp;&nbsp;</td><td>"+countName(v.orig*1)+"&nbsp;&nbsp;</td><td> "+(v.tons*1).toFixed(2)+"</td></tr>";
-        }
-    });
-    table += "</tbody></table>";
-    $('#data').html(table);
-     var $table = $('#dynTable');
-        $table.dataTable({
-          "bPaginate": true,
-          "numSorting": [[ 0, "asc" ]],
-          "aoColumns": [null,null,null],
-          "sDom": 'T<"clear">lfrtip',
-          "oTableTools": {
-              "sSwfPath": "../resources/swf/copy_csv_xls_pdf.swf"
-          }
-          
-      });
-}
-
   
   function sortMultiDimensional(a,b)
   {
