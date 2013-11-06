@@ -38,7 +38,7 @@
 	$rs=mysql_query($sql) or die($sql." ".mysql_error());
 	while($row = mysql_fetch_assoc( $rs )){
 
-		$csvrow['orig'] = $row[$orig_or_dest];
+		$csvrow['fips'] = $row[$orig_or_dest];
 		$csvrow['tons'] = $row['all_tons'];
 		$csv[] = $csvrow;
 

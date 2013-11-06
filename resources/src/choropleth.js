@@ -29,9 +29,11 @@ var choropleth = {
 		}
 
 		toggles.init();
-		if(typeof counties != 'undefined'){
+		if(typeof counties !== 'undefined'){
 			choropleth.countyList = counties;
 			loader.push(choropleth.countySelect);
+		}else{//counties is undefined
+			console.error('Must provide valid array of county fips ex. [27001,55123...]')
 		}
 		loader.push(choropleth.legendInit);
 		loader.push(choropleth.commoditySelect);

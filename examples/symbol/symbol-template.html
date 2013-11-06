@@ -1,0 +1,51 @@
+<html>
+<head>
+	<!-- Meta Data -->	
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="description" content="description">
+	<meta name="keywords" content="keywords">
+
+	<!-- Cascading Style Sheets -->
+	<link rel="stylesheet" type="text/css" href="../../resources/css/leaflet.css" />
+	<link rel="stylesheet" href="../../resources/css/TangleKit.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="../../resources/css/jquery.dataTables.css" />	
+
+	<!-- Javascript Includes -->
+	<script type="text/javascript" src="../../resources/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="../../resources/js/d3.v3.min.js"></script>	
+	<script type="text/javascript" src="../../resources/js/leaflet.js"></script>
+	<script type="text/javascript" src="../../resources/js/queue.v1.min.js"></script>
+	<script type="text/javascript" src="../../resources/js/topojson.v1.min.js"></script>
+	<script type="text/javascript" src="../../resources/js/colorbrewer.js"></script>
+	<script type="text/javascript" src="../../resources/js/tangle.min.js"></script>
+	<script type="text/javascript" src='../../resources/js/jquery.dataTables.min.js'></script>
+	<script type="text/javascript" src='../../resources/js/TableTools.min.js'></script>
+	<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script> 
+
+    
+    <script type="text/javascript" src="../../resources/src/symbol.js"></script>
+
+	<title>Symbol Template</title>
+</head>
+<body>
+	<div style="width:901px;margin:0 auto;">
+		<div id="map" style="width:900px;height:600px;"></div>
+		<div id="mode_select"></div>
+		<div id="commodity_select"></div>
+		<div id="orig_or_dest_select"></div>
+		<div id="info"></div>
+		<div id="legend"></div>
+		<div id="data"></div>
+	</div>
+	
+<script>
+$(function(){ // on page load
+
+	var mn = [27001,27003,27005,27007,27009,27011,27013,27015,27017,27019,27021,27023,27025,27027,27029,27031,27033,27035,27037,27039,27041,27043,27045,27047,27049,27051,27053,27055,27057,27059,27061,27063,27065,27067,27069,27071,27073,27075,27077,27079,27081,27083,27085,27087,27089,27091,27093,27095,27097,27099,27101,27103,27105,27107,27109,27111,27113,27115,27117,27119,27121,27123,27125,27127,27129,27131,27133,27135,27137,27139,27141,27143,27145,27147,27149,27151,27153,27155,27157,27159,27161,27163,27165,27167,27169,27171,27173];
+	symbol.settings.datasource = '/t2/data/get/getCountyOrigDestFlow.php';
+	symbol.tableDatasource = '/t2/data/get/getSymChart.php';
+	symbol.init(mn);
+})
+</script>
+</body>
+</html>

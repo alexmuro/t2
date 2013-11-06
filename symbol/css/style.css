@@ -5,7 +5,13 @@
   fill: orange;
 }
 
-
+path.arc {
+  pointer-events: none;
+  fill: none;
+  stroke: #000;
+  stroke-width:1px;
+  shape-rendering:crispEdges
+}
 
 path.cell {
   fill: none;
