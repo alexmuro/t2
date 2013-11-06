@@ -473,39 +473,37 @@ var choropleth = {
 	},
 	setUpTangle: function  () {
 
-    var element = document.getElementById("tangle-legend");
+	    var element = document.getElementById("tangle-legend");
 
-    var tangle = new Tangle(element, {
-        initialize: function () {
-            this.legendDomain = choropleth.legend_domain;
-            this.zero = (choropleth.legend_domain[0]/1000).toFixed(2)*1;
-            this.one = (choropleth.legend_domain[1]/1000).toFixed(2)*1;
-            this.two = (choropleth.legend_domain[2]/1000).toFixed(2)*1;
-            this.three = (choropleth.legend_domain[3]/1000).toFixed(2)*1;
-            this.four = (choropleth.legend_domain[4]/1000).toFixed(2)*1;
-            this.five = (choropleth.legend_domain[5]/1000).toFixed(2)*1;
-            this.six = (choropleth.legend_domain[6]/1000).toFixed(2)*1;
-            this.seven = (choropleth.legend_domain[7]/1000).toFixed(2)*1;
-            this.eight = (choropleth.legend_domain[8]/1000).toFixed(2)*1;
-            this.nine = (choropleth.legend_domain[9]/1000).toFixed(2)*1;
-            
+	    var tangle = new Tangle(element, {
+	        initialize: function () {
+	            this.legendDomain = choropleth.legend_domain;
+	            this.zero = (choropleth.legend_domain[0]/1000).toFixed(2)*1;
+	            this.one = (choropleth.legend_domain[1]/1000).toFixed(2)*1;
+	            this.two = (choropleth.legend_domain[2]/1000).toFixed(2)*1;
+	            this.three = (choropleth.legend_domain[3]/1000).toFixed(2)*1;
+	            this.four = (choropleth.legend_domain[4]/1000).toFixed(2)*1;
+	            this.five = (choropleth.legend_domain[5]/1000).toFixed(2)*1;
+	            this.six = (choropleth.legend_domain[6]/1000).toFixed(2)*1;
+	            this.seven = (choropleth.legend_domain[7]/1000).toFixed(2)*1;
+	            this.eight = (choropleth.legend_domain[8]/1000).toFixed(2)*1;
+	            this.nine = (choropleth.legend_domain[9]/1000).toFixed(2)*1;
+	        },
+	        update: function () {
+	            //
+	            var inputs = [this.zero,this.one,this.two,this.three,this.four,this.five,this.six,this.seven,this.eight,this.nine];
+	            var new_domain = [];
+	            inputs.forEach(function(d){
 
-        },
-        update: function () {
-            //
-            var inputs = [this.zero,this.one,this.two,this.three,this.four,this.five,this.six,this.seven,this.eight,this.nine];
-            var new_domain = [];
-            inputs.forEach(function(d){
-
-                if(!isNaN(d)){
-                    new_domain.push(d*1000);
-                }
-            });
-           
-            choropleth.threshold.domain(new_domain);
-            choropleth.updateMap();
-        }
-    });
+	                if(!isNaN(d)){
+	                    new_domain.push(d*1000);
+	                }
+	            });
+	           
+	            choropleth.threshold.domain(new_domain);
+	            choropleth.updateMap();
+	        }
+	    });
 	},
 	drawSumTable: function (data){
 	

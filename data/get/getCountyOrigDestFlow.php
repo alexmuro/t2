@@ -3,8 +3,15 @@
 
 	$commodity =$_POST['sctg'];
 	$mode = $_POST['mode'];
-
+	$orig_or_dest = $_POST['orig_or_dest'];
+	
 	$opposite = 'dest_fips';
+
+	if($orig_or_dest == 'orig_fips'){
+		$opposite = 'dest_fips';
+	}else{
+		$opposite = 'orig_fips';
+	}
 
 
 	$comm_clause = '';
@@ -23,7 +30,7 @@
 	$test = new db();
 
 	$inscon = $test->connect();
-	$sql = "SELECT distinct orig_fips,dest_fips, sum(all_tons) as all_tons FROM MN_Flows where orig_state = '27' and dest_state = '27' $comm_clause $mode_clause group by orig_fips,dest_fips";
+	$sql = "SELECT distinct orig_fips,dest_fips, sum(all_tons) as all_tons FROM MN_Flows where orig_state = '27' and dest_state = '27' $comm_clause $mode_clause group by $opposite,$orig_or_dest order by all_tons desc";
 	//echo $sql;
 	$csv = array();
 	

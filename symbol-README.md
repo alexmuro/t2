@@ -189,11 +189,13 @@ mode sets the mode of transportation that is queried for.
 
 ##### settings.orig_or_dest #####
 |Value| Meaning| 
-|-----------:|:-----------|
+|-----------:|:-----------| 
 |"dest_fips"| Import Flows|
 |"orig_fips"| Export Flows|
 
+##### settings.granularity #####
 
+ Granularity is the lowest value in for which a connection will be made between two counties on the map. It defaults 5 (the unit is thousands of tons). If you set it to 0, it will show all connections, but the map will load slower.
 
 ##### Container Naming Conflicts #####
  

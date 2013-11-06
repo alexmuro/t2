@@ -1,0 +1,40 @@
+@import url(../../resources/css/chord_chart.css);
+
+
+.county:hover {
+  fill: orange;
+}
+
+path.arc {
+  pointer-events: none;
+  fill: none;
+  stroke: #000;
+  stroke-width:1px;
+  shape-rendering:crispEdges
+}
+
+path.cell {
+  fill: none;
+  pointer-events: all;
+}
+
+circle {
+  fill: steelblue;
+  fill-opacity: .8;
+  stroke: #fff;
+}
+
+#cells.voronoi path.cell {
+  stroke: brown;
+}
+
+
+#cells g.lines path.arc {
+  display: inherit;
+}
+
+#data{
+  position:absolute;
+  top:400px;
+  right:100px;
+}

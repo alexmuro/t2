@@ -8,7 +8,7 @@ var symbol = {
 	mapContainer:'map',
 	infoContainer:'info',
 	tableDatasource:'',
-	settings : {datasource:'',sctg:'00',mode:"00",granularity:'1',orig_or_dest:'orig_fips' },
+	settings : {datasource:'',sctg:'00',mode:"00",granularity:'5',orig_or_dest:'dest_fips' },
 	map : {},
 	flowData : [],
 	linksByOrigin : {},
@@ -30,16 +30,18 @@ var symbol = {
     positions : [],
     simplePositions:[],
     hubs : [],
+    ll: 5,
     init:function(counties){
-    	console.log('init');
     	symbol.counties = counties;
+    	toggles.init();
     	loader.push(symbol.commoditySelect);
 		loader.push(symbol.modeSelect);
 		loader.push(symbol.origOrDestSelect);
+		loader.push(symbol.legendInit);
 		loader.push(symbol.drawCounties);
 		loader.push(symbol.loadFlowData);
 		loader.push(symbol.drawCentroids);
-		loader.push(symbol.drawArcs);
+		loader.push(symbol.drawArcs);		
 		loader.run();
     },
     legendInit: function(){
@@ -47,15 +49,13 @@ var symbol = {
 			.append($('<div></div>')
 				.attr("id",symbol.legendContainer+"_info")
 			);
-		var legendControls ='<hr><button id="legend-plus" value="+ threshold">+ Threshold</button><button id="legend-minus" value="- threshold">- Threshold</button><hr>Color Scale : <select id="colorbrews"></select><hr><center><button id="exportMap" value="">Export Map</button></center><div id="download"></div>';
+		var legendControls ='<hr><button id="legend-plus" value="+ threshold">+ Threshold</button><button id="legend-minus" value="- threshold">- Threshold</button><hr><center><button id="exportMap" value="">Export Map</button></center><div id="download"></div>';
 
-		$('#'+choropleth.legendContainer).append($('<div></div>').attr("id",choropleth.legendContainer+"_control").html(legendControls));
+		$('#'+symbol.legendContainer).append($('<div></div>').attr("id",symbol.legendContainer+"_control").html(legendControls));
 		$("#exportMap").on('click',function() {
 			
 			var legend_html = $("#legend_info").html();
-			//console.log('test',legend_html);
-			//console.log(choropleth.project([-118.25,34.05])[0]);
-			legend_coords=choropleth.project([-100.25,15.05]);
+			legend_coords=[0,0];//symbol.project([-100.25,15.05]);
 
 			$('#tangle-legend li').each(function(i){
 				d3.select(".leaflet-overlay-pane svg")
@@ -63,15 +63,15 @@ var symbol = {
 				.attr("x",legend_coords[0])
 				.attr("y",(legend_coords[1]+30*(i)))
 				.attr("width","20px")
-    			.attr("height","20px")
-    			.attr("fill",colorbrewer[choropleth.brewer[choropleth.brewer_index]][choropleth.ll][i])
+    			.attr("height",symbol.numRange[i])
+    			.attr("fill","#000")
 			})
 
 			$('#tangle-legend li .legend_text_output').each(function(i){
 				d3.select(".leaflet-overlay-pane svg")
 				.append("text")
-				.attr("x",symbol.project(legend_coords)[0]+30)
-				.attr("y",(symbol.project(legend_coords)[1]+30*(i))+15)
+				.attr("x",(legend_coords)[0]+30)
+				.attr("y",(legend_coords[1]+30*(i))+15)
 				.attr("width","40px")
     			.attr("height","20px")
     			.text($(this).text().replace("drag","").replace("drag","") );
@@ -83,8 +83,7 @@ var symbol = {
 				.attr("xmlns", "http://www.w3.org/2000/svg")
 				.node().parentNode.innerHTML;
 			
-			//console.log(html);
-		
+			
 
 			// the canvas calls to output a png
 			$('#download').html("<a style='font-size:.8em;' alt='exported_county_flow_map.png' href=data:image/svg+xml;base64,"+ btoa(html)+">Right Click to Download</a>");
@@ -132,10 +131,10 @@ var symbol = {
 			symbol.flowData = data;
 			var maxFlow = 0;
 		  	symbol.flowData.forEach(function(flow) {
-			    if(flow.tons > maxFlow){
+			    if(flow.tons > maxFlow && flow.orig != flow.dest){
 			      maxFlow = flow.tons;
 			    }
-			    if(flow.tons > 3){
+			    if(flow.tons > symbol.settings.granularity){
 			        
 			        var origin = flow.orig,
 			        destination = flow.dest,
@@ -151,6 +150,25 @@ var symbol = {
 					.range([0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30]);
 
 			
+			symbol.numRange = [];
+			var z = 1;
+			for(p=0;p < symbol.ll;p++){
+				if(p===0){
+					symbol.numRange.push(z);
+				}else{
+					symbol.numRange.push(z+symbol.numRange[p-1]);
+				}
+			}
+			symbol.legend_domain = d3.scale.quantile()
+				.domain([symbol.settings.granularity,maxFlow])
+				.range(symbol.numRange).quantiles();	
+				
+
+			symbol.linequantize = d3.scale.threshold()
+					.domain(symbol.legend_domain)
+					.range(symbol.numRange);
+
+			symbol.setLegend();
 			loader.run();
 	     
 		})
@@ -159,6 +177,62 @@ var symbol = {
 			loader.run();
 		});
     },
+    setLegend : function(){
+		if(typeof symbol.linequantize.domain !== 'undefined' && symbol.legendContainer !== ''){
+			var legendText = '<hr><h3>Tons Traded</h3><i style="font-size:.7em">in thousands of tons</i><ul id="tangle-legend">';
+			var prev = 0;
+			var numbers = ["zero","one","two","three","four","five","six","seven","eight","nine"];
+			symbol.linequantize.domain().forEach(function(d,i){
+				
+				if(i === 0){
+					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="300" height="100" fill="#000"></rect></svg><span class="legend_text_output">&lt;= <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
+				}
+				else{
+					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="300" height="100" fill="#000"></rect></svg><span class="legend_text_output"><span data-var="'+numbers[i-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-format="%.2f"></span> - <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
+				}
+			});
+			legendText += '<li><svg width="20" height="'+symbol.numRange[symbol.ll-1]+'"><rect width="300" height="100" fill="#000"></rect></svg><span class="legend_text_output">&gt; <span data-var="'+numbers[symbol.linequantize.domain().length-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-max=1000 data-format="%.2f"></span> tons</span></li>';
+				
+			legendText +="</ul>";
+			$("#"+symbol.legendContainer+"_info").html(legendText);
+			symbol.setUpTangle();
+			loader.run();
+		}
+	},
+	setUpTangle: function  () {
+
+	    var element = document.getElementById("tangle-legend");
+
+	    var tangle = new Tangle(element, {
+	        initialize: function () {
+	            this.legendDomain = symbol.legend_domain;
+	            this.zero = (symbol.legend_domain[0]/1).toFixed(2)*1;
+	            this.one = (symbol.legend_domain[1]/1).toFixed(2)*1;
+	            this.two = (symbol.legend_domain[2]/1).toFixed(2)*1;
+	            this.three = (symbol.legend_domain[3]/1).toFixed(2)*1;
+	            this.four = (symbol.legend_domain[4]/1).toFixed(2)*1;
+	            this.five = (symbol.legend_domain[5]/1).toFixed(2)*1;
+	            this.six = (symbol.legend_domain[6]/1).toFixed(2)*1;
+	            this.seven = (symbol.legend_domain[7]/1).toFixed(2)*1;
+	            this.eight = (symbol.legend_domain[8]/1).toFixed(2)*1;
+	            this.nine = (symbol.legend_domain[9]/1).toFixed(2)*1;
+	        },
+	        update: function () {
+	            //
+	            var inputs = [this.zero,this.one,this.two,this.three,this.four,this.five,this.six,this.seven,this.eight,this.nine];
+	            var new_domain = [];
+	            inputs.forEach(function(d){
+
+	                if(!isNaN(d)){
+	                    new_domain.push(d*1000);
+	                }
+	            });
+	           
+	            symbol.linequantize.domain(new_domain);
+	            //symbol.updateMap();
+	        }
+	    });
+	},
     commoditySelect : function(){
 
 		$('#'+symbol.commoditySelectContainer)
@@ -226,13 +300,11 @@ var symbol = {
 	},
 	drawCounties: function(){
 		//initialize the map
-		//draw the counties passed to init
-
+		//draw the counties passed to init	
 		symbol.us.objects.display = {};
 		symbol.us.objects.display.type ="GeometryCollection";
 		symbol.us.objects.display.geometries =  [];
 		symbol.us.objects.counties.geometries.forEach(function(county){
-			//console.log(symbol.counties.indexOf(county));
 			if(symbol.counties.indexOf(county.id) !== -1){
 				symbol.us.objects.display.geometries.push(county);
 			}	
@@ -287,8 +359,13 @@ var symbol = {
 		loader.run();
 	},
 	drawCentroids: function(){
+		
+		if(!is_empty(symbol.veronoi)){
+			symbol.g_cells.selectAll("path.arc").remove();
+		}
 
 		symbol.g.selectAll("circle").remove();
+
 		symbol.circles = symbol.g.selectAll("circle")
 		      .data(symbol.hubs)
 		    .enter()
@@ -296,12 +373,16 @@ var symbol = {
 			    .attr("cx", function(d, i) { if(symbol.positions[i]){return symbol.project(symbol.positions[i])[0];} })
 			    .attr("cy", function(d, i) { if(symbol.positions[i]){return symbol.project(symbol.positions[i])[1];} })
 			    .attr("r", function(d, i) {
-			    	
-			    	if(isNaN(symbol.quantize(symbol.countByDest[d.id]*1))){ return 1;}
-			    	else { return symbol.quantize(symbol.countByDest[d.id]*1)}
+			    	if(symbol.settings.orig_or_dest == 'orig_fips'){
+				    	if(isNaN(symbol.quantize(symbol.countByDest[d.id]*1))){ return 1;}
+				    	else { return symbol.quantize(symbol.countByDest[d.id]*1)}
+				    }else{
+				    	if(isNaN(symbol.quantize(symbol.countByOrig[d.id]*1))){ return 1;}
+				    	else { return symbol.quantize(symbol.countByOrig[d.id]*1)}
+				    }
 			      	 
 			    })
-		    .sort(function(a, b) { return symbol.countByOrig[b.id] - symbol.countByOrig[a.id]; });
+		    //.sort(function(a, b) { return symbol.countByOrig[b.id] - symbol.countByOrig[a.id]; });
 		    symbol.reset();
 		    //console.log();
 		    loader.run();
@@ -333,8 +414,8 @@ var symbol = {
 		symbol.veronoi =symbol.g_cells.append("svg:path")
 		    .attr("id", function(d){return "county_" + d.id})
 		    .attr("class", "cell")
-		    .attr("fill","none")
-		    .attr("pointer-events","all")
+		    .attr("fill":"none")
+		    .attr("stroke":"none")
 		    .attr("d", function(d, i) { 
 		    	if (polygons[i]) { 
 		  			return "M" + polygons[i].join("L") + "Z";
@@ -343,20 +424,51 @@ var symbol = {
 		    .on("click", function(d, i) {
 
 		    	symbol.drawData(d.id);
-		        d3.select("#"+symbol.infoContainer).html(countName(d.id));
-		        symbol.g_cells.selectAll("path.arc").remove();
-		        symbol.g_cells.selectAll("path.arc")
-		        	.data(symbol.linksByOrigin[d.id])
-		        	.enter().append("svg:path")
-		        	.attr("class", "arc")
-		        	//.attr("shape-rendering","crispEdges")
-		     		.attr("stroke-width", function(d){
-				      })
-		      		.attr("d", function(d) {
-		      			return symbol.path(symbol.arc(d)); 
-			    	});
+		    	$("#"+symbol.infoContainer).html(countName(d.id));
+		     	var first = (d3.selectAll(".lines"))
+		        if(first[0].length != 0){
+		        //if there is more than one county showing lines
+		          var id = first.attr("class").split(" ");
+		          first.attr("class",id[0]);//return the class to only county id
+
+		        }
+		        var county = d3.selectAll(".county_"+d.id);
+		        county.attr("class","county_"+d.id+" lines");//add lines to county class
+		      
+
+
+		      //   symbol.g_cells.selectAll("path.arc").remove();
+		      //   console.log(symbol.g_cells.selectAll("path.arc"));
+
+		      //   symbol.g_cells.selectAll("path.arc")
+		      //   	.data(symbol.linksByOrigin[d.id])
+		      //   	.enter().append("svg:path")
+		      //   	.attr("class", function(d){
+		      //   		return "arc somethingelse";
+		      //   	})
+		      //   	//.attr("shape-rendering","crispEdges")
+		     	// 	.attr("d", function(d) {
+		      // 			//console.log(d,)
+		      // 			return symbol.path(symbol.arc(d)); 
+			    	// });
 
 		    });
+
+		symbol.g_cells.selectAll("path.arc")
+			    .data(function(d) { 
+			        if(typeof d.id != 'undefined'){      
+			   	      return symbol.linksByOrigin[d.id] || [];
+			        }
+			        else{ return [];} 
+			    })
+		    .enter().append("svg:path")
+		      	.attr("stroke-width", function(d){
+		      		var output = symbol.linequantize(d.tons);
+			        if(isNaN(output)) {return 1;}
+			        else{return output;}
+		        })
+		        .attr("class", "arc")
+		      	.attr("d", function(d) { return symbol.path(symbol.arc(d)); });
  		symbol.reset();
 		loader.run();
 	},
@@ -504,7 +616,7 @@ function drawTable(data){
      var $table = $('#dynTable');
         $table.dataTable({
           "bPaginate": true,
-          "numSorting": [[ 0, "asc" ]],
+          "numSorting": [[ 2, "desc" ]],
           "aoColumns": [null,null,null],
           "sDom": 'T<"clear">lfrtip',
           "oTableTools": {
@@ -513,3 +625,20 @@ function drawTable(data){
           
       });
 }
+function sortMultiDimensional(a,b)
+{
+	return ((a[1] < b[1]) ? -1 : ((a[1] > b[1]) ? 1 : 0));
+}
+var toggles = {
+
+	init : function() {
+
+		$("#legend h2 a").on("click", function() {
+			$(this).toggleClass("closed");
+			$("#legend-detail").slideToggle(300);
+			return false;
+		});
+
+	}
+
+};

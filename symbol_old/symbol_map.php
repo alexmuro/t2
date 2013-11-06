@@ -360,9 +360,11 @@ function symbol_graph(map,flow_data,orig_or_dest)
     .on("click", function(d, i) {
 
         var first = (d3.selectAll(".lines"))
+        console.log(first);
         if(first[0].length != 0){
           var id = first.attr("class").split(" ");
           first.attr("class",id[0]);
+          console.log(id);
         }
         var county = d3.selectAll(".county_"+d.id);
         county.attr("class","county_"+d.id+" lines");
@@ -385,11 +387,11 @@ function symbol_graph(map,flow_data,orig_or_dest)
                   drawTable(data); })
                 .fail(function(data) { console.log(data.responseText) });
         d3.select("h2 span").html(d.name);
-        display = [];
-        $.each(linksByOrigin[d.id],function(d,v){
-          display.push([v.target,v.tons*1]);
-        });
-        display.sort(sortMultiDimensional);
+        // display = [];
+        // $.each(linksByOrigin[d.id],function(d,v){
+        //   display.push([v.target,v.tons*1]);
+        // });
+        // display.sort(sortMultiDimensional);
 
         //console.log(display);
     });
