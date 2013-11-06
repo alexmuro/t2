@@ -83,7 +83,7 @@ $(function(){ // on page load
 
 ### symnbol.init(container,counties) ###
 
-To create a blank symbol map, pass the element ID to its constructor and the list of counties you wish to be able to visualize.
+To create a blank symbol map, pass the list of counties you wish to be able to visualize.
 
 
 ### symbol.settings ###
