@@ -414,8 +414,8 @@ var symbol = {
 		symbol.veronoi =symbol.g_cells.append("svg:path")
 		    .attr("id", function(d){return "county_" + d.id})
 		    .attr("class", "cell")
-		    .attr("fill":"none")
-		    .attr("stroke":"none")
+		    .attr("fill","none")
+		    .attr("stroke","none")
 		    .attr("d", function(d, i) { 
 		    	if (polygons[i]) { 
 		  			return "M" + polygons[i].join("L") + "Z";
