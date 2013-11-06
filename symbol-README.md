@@ -103,7 +103,7 @@ The datasource is the URL of the page which provides data. If it remains unset t
 example
 
 ```javascript
-symbol.settings.datasource = 'http://vis.availabs.org/t2/data/get/getCountyToNation.php'
+symbol.settings.datasource = 'http://vis.availabs.org/t2/data/get/getCountyOrigDestFlow.php'
 symbol.init('map');
 ```
 
@@ -249,8 +249,9 @@ The data source must return a JSON object of the following format:
   ...
 ] 
 
- The distinct list of origins in the data must be equal to the counties input array passed to symbol.init(). For each origin the list of all destinations must be equal to the list of counties passed to symbol.ini sat()
 ```
+
+ The distinct list of origins in the data must be equal to the counties input array passed to symbol.init(). For each origin the list of all destinations must be equal to the list of counties passed to symbol.init()
 
 ## Table Data Source Format ##
 
