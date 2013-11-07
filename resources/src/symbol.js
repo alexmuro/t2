@@ -22,6 +22,7 @@ var symbol = {
     cells : {},
     arc: {},
     quantize: {},
+    currentFIPS: '',
     locationByCounty : {},
     cells: {},
     counties:[],
@@ -210,6 +211,9 @@ var symbol = {
 				.range(symbol.displayRange)
 				//.range([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);		
 
+			if(symbol.currentFIPS != ''){
+				symbol.drawData(symbol.currentFIPS);
+			}
 			symbol.setLegend();
 			if(!is_empty(symbol.veronoi)){
 				symbol.g_cells.selectAll("path.arc")
@@ -467,7 +471,7 @@ var symbol = {
 		    	 }
 		   	})
 		    .on("click", function(d, i) {
-
+		    	symbol.currentFIPS = d.id;
 		    	symbol.drawData(d.id);
 		    	$("#"+symbol.infoContainer).html(countName(d.id));
 		     	var first = (d3.selectAll(".lines"))
