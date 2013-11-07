@@ -108,10 +108,9 @@ var symbol = {
 			{
 				$('#legend-minus').removeAttr('disabled');
 			}
-			choropleth.ll +=1;
-			choropleth.updateLegend();
-			choropleth.updateMap();
-			if(choropleth.ll == 9){
+			symbol.ll +=1;
+			symbol.updateLegend();
+			if(symbol.ll == 9){
 				$('#legend-plus').attr("disabled", "disabled");
 			}
 
@@ -122,10 +121,9 @@ var symbol = {
 			{
 				$('#legend-plus').removeAttr('disabled');
 			}
-			choropleth.ll -=1;
-			choropleth.updateLegend();
-			choropleth.updateMap();
-			if(choropleth.ll == 4){
+			symbol.ll -=1;
+			symbol.updateLegend();
+			if(symbol.ll == 4){
 				$('#legend-minus').attr("disabled", "disabled");
 			}
 
@@ -142,10 +140,10 @@ var symbol = {
     	$.ajax({url:symbol.settings.datasource, type:'POST',data: symbol.settings ,dataType:'json',async:true})
 		.done(function(data) { 
 			symbol.flowData = data;
-			var maxFlow = 0;
+			symbol.maxFlow = 0;
 		  	symbol.flowData.forEach(function(flow) {
-			    if(flow.tons > maxFlow && flow.orig != flow.dest){
-			      maxFlow = flow.tons;
+			    if(flow.tons > symbol.maxFlow && flow.orig != flow.dest){
+			      symbol.maxFlow = flow.tons;
 			    }
 			    if(flow.tons > symbol.settings.granularity && flow.orig != flow.dest){
 			        
@@ -158,13 +156,24 @@ var symbol = {
 			    }
 	  		});
 	  		//
+	  		symbol.updateLegend();
+			loader.run();
+	     
+		})
+		.fail(function(e) { 
+			console.log(e.responseText) 
+			loader.run();
+		});
+    },
+    updateLegend: function(){
+
 	  		symbol.quantize = d3.scale.sqrt()
-					.domain([0,maxFlow])
-					.range([0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30]);
+			.domain([0,symbol.maxFlow])
+			.range([0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30]);
 
 			
 			symbol.numDomain = [];
-			var rangeIncrement = maxFlow / symbol.ll;
+			var rangeIncrement = symbol.maxFlow / symbol.ll;
 			var z = 1;
 			for(p=1;p <= symbol.ll;p++){
 				
@@ -173,10 +182,18 @@ var symbol = {
 			}
 
 			symbol.numRange = [];
-			var rangeIncrement = maxFlow / symbol.ll;
+			var rangeIncrement = symbol.maxFlow / symbol.ll;
 			var z = 1;
 			for(p=0;p < symbol.ll;p++){
 					symbol.numRange.push((p+1)*2);
+			}
+
+
+			symbol.displayRange = [];
+			var rangeIncrement = symbol.maxFlow / symbol.ll;
+			var z = 1;
+			for(p=0;p < symbol.ll;p++){
+					symbol.displayRange.push((p)*2);
 			}
 		
 			symbol.legend_domain = d3.scale.sqrt()
@@ -189,8 +206,9 @@ var symbol = {
 					.range(symbol.numRange);
 
 			symbol.linescale = d3.scale.sqrt()
-				.domain([0,maxFlow/10])
-				.range([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);		
+				.domain([0,symbol.maxFlow/10])
+				.range(symbol.displayRange)
+				//.range([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);		
 
 			symbol.setLegend();
 			if(!is_empty(symbol.veronoi)){
@@ -205,13 +223,6 @@ var symbol = {
 				        else{return output;}
 		       		})
 			}
-			loader.run();
-	     
-		})
-		.fail(function(e) { 
-			console.log(e.responseText) 
-			loader.run();
-		});
     },
     setLegend : function(){
 		if(typeof symbol.linequantize.domain !== 'undefined' && symbol.legendContainer !== ''){
@@ -221,13 +232,13 @@ var symbol = {
 			symbol.linequantize.domain().forEach(function(d,i){
 				
 				if(i === 0){
-					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="300" height="100" fill="#000"></rect></svg><span class="legend_text_output">&lt;= <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
+					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="200" height="200" fill="#000"></rect></svg><span class="legend_text_output">&lt;= <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
 				}
 				else{
-					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="300" height="100" fill="#000"></rect></svg><span class="legend_text_output"><span data-var="'+numbers[i-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-format="%.2f"></span> - <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
+					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="200" height="200" fill="#000"></rect></svg><span class="legend_text_output"><span data-var="'+numbers[i-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-format="%.2f"></span> - <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
 				}
 			});
-			legendText += '<li><svg width="20" height="'+symbol.numRange[symbol.ll-1]+'"><rect width="300" height="100" fill="#000"></rect></svg><span class="legend_text_output">&gt; <span data-var="'+numbers[symbol.linequantize.domain().length-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-max=1000 data-format="%.2f"></span> tons</span></li>';
+			legendText += '<li><svg width="20" height="'+symbol.numRange[symbol.ll-1]+'"><rect width="200" height="200" fill="#000"></rect></svg><span class="legend_text_output">&gt; <span data-var="'+numbers[symbol.linequantize.domain().length-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-max=1000 data-format="%.2f"></span> tons</span></li>';
 				
 			legendText +="</ul>";
 			$("#"+symbol.legendContainer+"_info").html(legendText);
