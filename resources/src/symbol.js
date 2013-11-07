@@ -232,13 +232,13 @@ var symbol = {
 			symbol.linequantize.domain().forEach(function(d,i){
 				
 				if(i === 0){
-					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="200" height="200" fill="#000"></rect></svg><span class="legend_text_output">&lt;= <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
+					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="200" height="200" fill="#000"></rect></svg><span class="legend_text_output">&lt;= <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="1" data-min=0 data-max=10000 data-format="%.2f"></span> tons</span></li>';
 				}
 				else{
-					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="200" height="200" fill="#000"></rect></svg><span class="legend_text_output"><span data-var="'+numbers[i-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-format="%.2f"></span> - <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="0.01" data-min=0 data-format="%.2f"></span> tons</span></li>';
+					legendText += '<li><svg width="20" height="'+symbol.numRange[i]+'"><rect width="200" height="200" fill="#000"></rect></svg><span class="legend_text_output"><span data-var="'+numbers[i-1]+'" class="TKAdjustableNumber" data-step="1" data-min=0 data-format="%.2f"></span> - <span data-var="'+numbers[i]+'" class="TKAdjustableNumber" data-step="1" data-min=0 data-max=10000 data-format="%.2f"></span> tons</span></li>';
 				}
 			});
-			legendText += '<li><svg width="20" height="'+symbol.numRange[symbol.ll-1]+'"><rect width="200" height="200" fill="#000"></rect></svg><span class="legend_text_output">&gt; <span data-var="'+numbers[symbol.linequantize.domain().length-1]+'" class="TKAdjustableNumber" data-step="0.1" data-min=0 data-max=1000 data-format="%.2f"></span> tons</span></li>';
+			legendText += '<li><svg width="20" height="'+symbol.numRange[symbol.ll-1]+'"><rect width="200" height="200" fill="#000"></rect></svg><span class="legend_text_output">&gt; <span data-var="'+numbers[symbol.linequantize.domain().length-1]+'" class="TKAdjustableNumber" data-step="10" data-min=0 data-max=10000 data-format="%.2f"></span> tons</span></li>';
 				
 			legendText +="</ul>";
 			$("#"+symbol.legendContainer+"_info").html(legendText);
