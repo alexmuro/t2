@@ -72,10 +72,11 @@ var symbol = {
 
 
 			$('#tangle-legend li').each(function(i){
+				console.log(symbol.numRange[i],i);
 				d3.select(".leaflet-overlay-pane svg")
 				.append("rect")
 				.attr("x",legend_coords[0])
-				.attr("y",(legend_coords[1]+30*(i)))
+				.attr("y",legend_coords[1]+(30*(i)+(10-i)))
 				.attr("width","20px")
     			.attr("height",symbol.numRange[i])
     			.attr("fill","#000")
@@ -185,7 +186,7 @@ var symbol = {
 			symbol.numRange = [];
 			var rangeIncrement = symbol.maxFlow / symbol.ll;
 			var z = 1;
-			for(p=0;p < symbol.ll;p++){
+			for(p=0;p <= symbol.ll;p++){
 					symbol.numRange.push((p+1)*2);
 			}
 
