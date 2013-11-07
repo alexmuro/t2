@@ -55,7 +55,20 @@ var symbol = {
 		$("#exportMap").on('click',function() {
 			
 			var legend_html = $("#legend_info").html();
-			legend_coords=[0,0];//symbol.project([-100.25,15.05]);
+			
+			legend_coords=[$('#symbol-overlay')[0].getBoundingClientRect().width,0];//symbol.project([-100.25,15.05]);
+
+			d3.select('#symbol-overlay')
+				.attr('width',$('#symbol-overlay')[0].getBoundingClientRect().width+200);
+
+			d3.selectAll("path.arc")
+				.attr('style','display:none;');
+
+			d3.selectAll("#cells g.lines path.arc")
+				.attr('style',function(d){
+					return 'display:inherit;'
+				});
+
 
 			$('#tangle-legend li').each(function(i){
 				d3.select(".leaflet-overlay-pane svg")
@@ -134,7 +147,7 @@ var symbol = {
 			    if(flow.tons > maxFlow && flow.orig != flow.dest){
 			      maxFlow = flow.tons;
 			    }
-			    if(flow.tons > symbol.settings.granularity){
+			    if(flow.tons > symbol.settings.granularity && flow.orig != flow.dest){
 			        
 			        var origin = flow.orig,
 			        destination = flow.dest,
@@ -150,33 +163,47 @@ var symbol = {
 					.range([0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30]);
 
 			
+			symbol.numDomain = [];
+			var rangeIncrement = maxFlow / symbol.ll;
+			var z = 1;
+			for(p=1;p <= symbol.ll;p++){
+				
+				symbol.numDomain.push(p*rangeIncrement);
+				
+			}
+
 			symbol.numRange = [];
+			var rangeIncrement = maxFlow / symbol.ll;
 			var z = 1;
 			for(p=0;p < symbol.ll;p++){
-				if(p===0){
-					symbol.numRange.push(z);
-				}else{
-					symbol.numRange.push(z+symbol.numRange[p-1]);
-				}
+					symbol.numRange.push((p+1)*2);
 			}
-			symbol.legend_domain = d3.scale.quantile()
-				.domain([symbol.settings.granularity,maxFlow])
-				.range(symbol.numRange).quantiles();	
+		
+			symbol.legend_domain = d3.scale.sqrt()
+				.domain(symbol.numDomain)
+				.range(symbol.numRange).domain();	
 				
 
 			symbol.linequantize = d3.scale.threshold()
 					.domain(symbol.legend_domain)
 					.range(symbol.numRange);
 
+			symbol.linescale = d3.scale.sqrt()
+				.domain([0,maxFlow/10])
+				.range([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);		
+
 			symbol.setLegend();
 			if(!is_empty(symbol.veronoi)){
 				symbol.g_cells.selectAll("path.arc")
 					.transition().duration(500)
 					.attr("stroke-width", function(d){
-		      		var output = symbol.linequantize(d.tons);
-			        if(isNaN(output)) {return 1;}
-			        else{return output;}
-		        })
+						var output = symbol.linescale(d.tons);
+			      		if(output < .5 ){
+			      			output = 0;
+			      		}
+				        if(isNaN(output)) {return 0;}
+				        else{return output;}
+		       		})
 			}
 			loader.run();
 	     
@@ -329,7 +356,7 @@ var symbol = {
 			attributionControl:false
 		});//.addLayer(new L.TileLayer("http://{s}.tile.cloudmade.com/117aaa97872a451db8e036485c9f464b/998/256/{z}/{x}/{y}.png"));
 
-		symbol.svg = d3.select(symbol.map.getPanes().overlayPane).append("svg");
+		symbol.svg = d3.select(symbol.map.getPanes().overlayPane).append("svg").attr("id","symbol-overlay");
 		symbol.g = symbol.svg.append("g").attr("class", "leaflet-zoom-hide counties");
 
 		symbol.bounds = d3.geo.bounds(display);
@@ -376,6 +403,7 @@ var symbol = {
 		      .data(symbol.hubs)
 		    .enter()
 		    	.append("svg:circle")
+		    	.attr("fill","steelblue")
 			    .attr("cx", function(d, i) { if(symbol.positions[i]){return symbol.project(symbol.positions[i])[0];} })
 			    .attr("cy", function(d, i) { if(symbol.positions[i]){return symbol.project(symbol.positions[i])[1];} })
 			    .attr("r", function(d, i) {
@@ -454,7 +482,7 @@ var symbol = {
 		    .enter().append("svg:path")
 		      	.attr("stroke-width", function(d){
 		      		var output = symbol.linequantize(d.tons);
-			        if(isNaN(output)) {return 1;}
+			        if(isNaN(output)) {return 0;}
 			        else{return output;}
 		        })
 		        .attr("class", "arc")
