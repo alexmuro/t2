@@ -1,0 +1,823 @@
+<html><head><style>#markdown-wrapper {
+  margin: 0 auto;
+  overflow: auto;
+  width: 920px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#markdown-container {
+    display: block;
+    float: left;
+  clear: left;
+  margin-left: 5%;
+  margin-bottom: 40px;
+    width: 65%;
+    line-height: 1.6em;
+  font: 14px helvetica,arial,freesans,clean,sans-serif;
+    color:black; 
+}
+
+#markdown-outline {
+    float: right;
+  display: block;
+    position: fixed; 
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  font: 13px helvetica,arial,freesans,clean,sans-serif;
+  margin: 3% 3% 3% 0;
+    padding: 10px 5px 10px 5px;
+  width: 25%;
+  color: #555;
+  line-height: 1.4em;
+
+  border-radius: 0.5em;
+  -moz-border-radius: 0.5em;
+  -webkit-border-radius: 0.5em;
+}
+
+#markdown-outline ul {
+    margin: 5px 0 5px 0;
+    padding-left: 15px;
+    font-size: 13px; 
+}
+
+#markdown-outline ul:first-child {
+    border:none;
+}
+
+#markdown-backTop {
+    padding: 5px 5px 5px 5px;
+    width:20px;
+    height:20px;
+    background: url(images/top-icon.png) no-repeat 5px 5px;
+    cursor:pointer;
+}
+
+#markdown-backTop:hover {
+  background: #fff url(images/top-icon.png) no-repeat 5px 5px;
+}
+
+#markdown-raw {
+    padding:5px;
+    width:20px;
+    height:20px;
+    background:url(images/source-s-icon.png) no-repeat 5px 5px;
+    cursor:pointer;
+}
+
+#markdown-raw:hover {
+  background: #fff url(images/source-s-icon.png) no-repeat 5px 5px;
+}
+
+#markdown-bottom {
+    padding: 5px 5px 5px 5px;
+    width:20px;
+    height:20px;
+    background:url(images/bottom-icon.png) no-repeat 5px 5px;
+    cursor:pointer;
+}
+
+#markdown-bottom:hover {
+  background: #fff url(images/bottom-icon.png) no-repeat 5px 5px; 
+}
+
+#markdown-buttons-container {
+  position : fixed;
+  bottom: 0;
+  right: 0;
+  border: 1px solid rgb(236, 236, 236);
+  background: rgb(248, 248, 248);
+}
+
+@media print{
+    #markdown-container {
+      margin: 5%;
+      width: 90%;
+      font: 12pt Georgia, "Times New Roman", Times, serif;
+      line-height: 1.3;
+    }
+}
+
+@media screen and (max-width: 940px) {
+
+  #markdown-outline {
+    visibility: hidden;
+  }
+
+  #markdown-container {
+    width: 90%;
+  }
+
+  #markdown-wrapper {
+    width: auto;
+  }
+}
+
+body, html {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.md {
+  background-color: #eee;
+  border-radius:3px;
+  margin: 0;
+  padding:3px;
+}
+
+article {
+  padding: 3px0px;
+  border: 1px solid #cacaca;
+  background-color: white;
+}
+article > :first-child {
+  margin-top: 0!important;
+}
+
+h1 {
+  font-size:28px;
+  margin-bottom:10px;
+  color: black;
+}
+
+h2 {
+  font-size:24px;
+  margin:20px 0 10px;
+  color:    black;
+  border-bottom: 1px solid #ccc;
+}
+
+h3 {
+  font-size:18px;
+  margin-bottomn:20px 0 10px;
+}
+
+h4 {
+  font-size:16px;
+  font-weight:bold;
+  margin:20px 0 10px;
+}
+
+h5 {
+  font-size:14px;
+  font-weight:bold;
+  margin:20px 0 10pxx;
+}
+
+h6 {
+  color:#777;
+  font-size:14px;
+  font-weight:bold;
+  margin:20px 0 10px;
+}
+
+hr {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+  border: 0 none;
+  height: 4px;
+  margin: 15px 0;
+  paddingg: 0;
+}
+
+p {
+  margin: 15px 0; 
+}
+
+blockquote
+{
+  word-wrap: break-word;
+  border-left:4px solid #ddd;
+  padding-left:11px;
+  color:#555;
+  margin:14px 0;
+}
+
+table
+{
+  font-sizeze: 14px;
+  border-collapse:collapse;
+  margin:20px 0 0;
+  padding:0;
+}
+
+transparentable tr
+{
+  border-top:1px solid #ccc;
+  background-color:#fff;
+  margin:0;
+  padding:0;
+}
+
+table tr:nth-child(2n)
+{
+  background-color:#f8f8f8;
+}
+table tr th[align="center"], table tr td[align="center"] {
+  text-align:text-aligncenter;
+}
+table tr th, table tr td
+{
+  border:1px solid #ccc;
+  text-alignn:left;
+  margin:0;
+  padding:6px 13px;
+}
+
+ul, ol
+{
+  padding-left: 30px;
+}
+
+ul li, ol li
+{
+  margin-top:7px;
+  margin-bottom:7px;
+}
+
+a, a code {
+  color: #4183C4;
+  text-decoration:none;
+}
+
+p>code, li>code, td>code {
+  margin: 0 2px;
+  padding: 0 5px;
+  white-space: nowrap;
+  border: 1px solid #ddd;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+.shadow {
+  -webkit-border-radiusit-box-shadow:0 5px 15px #000;
+  -moz-box-shadow:0 5px 15px #000;
+  box-shadow:0 5px 15px #000;
+}
+
+a:link {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+a:hover, a:visited {
+  color: #4183c4;
+  text-decoration: underline;
+}
+
+.highlight pre, pre {
+  background-color:#f8f8f8;
+  border:1px solid #ccc;
+  font-size:13px;
+  line-height:12px9px;
+  overflow:auto;
+  border-radius:3px;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+}
+/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+
+pre code {
+  display: block; padding: 0.5em;
+  color: #333;
+  background: #f8f8ff
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+</style></head>
+<body><div id="markdow-wrapper"><div id="markdown-container"><h1 id="0"><font><font>EDR Commodity Flow Visualizations</font></font></h1>
+<p><font><font>These tools support so-called “modern” browsers, which generally means everything except IE8 and below.</font></font></p>
+<h2 id="1"><font><font>Symbol Maps</font></font></h2>
+<p><font><font>To use symbol maps simply include symbol.0.1.0.min.js in your project along with its dependencies.</font></font></p>
+<h3 id="2"><font><font>Dependencies</font></font></h3>
+<p><font><font>d3js - Javascript Visualization &amp; Mapping Library</font></font></p>
+<p><font><font>topojson - Geographic Data Storage and Simplification</font></font></p>
+<p><font><font>tangle + tanglekit - Interactive Documents Engine</font></font></p>
+<p><font><font>dataTables - Table generation and Download</font></font></p>
+<p><font><font>Queue js - To handle async data loads</font></font></p>
+<p><font><font>All dependencies can be found in the resources folder.
+See </font></font><code><font><font>examples/symbol/symbol-template.html</font></font></code><font><font> for an html template for symbol maps.</font></font></p>
+<h2 id="3"><font><font>Gettings Started</font></font></h2>
+<p><font><font> This template is all the code required for creating a symbol map. The template includes no css for page formatting so it can be easily integrated with any stylesheet. To view the AVAIL styled symbol map take a look in the /symbol folder for page layout and css.</font></font></p>
+<pre><code class="html"><font><font>&lt;html&gt;</font></font><font></font><font><font>
+&lt;head&gt;</font></font><font></font><font><font>
+  &lt;! - Meta Data -&gt;  ,eu  </font></font><font></font><font><font>
+  &lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</font></font><font></font><font><font>
+  &lt;meta name="description" content="description"&gt;</font></font><font></font><font><font>
+  &lt;meta name="keywords" content="keywords"&gt;</font></font><font></font>
+<font></font><font><font>
+  &lt;!-- Cascading Style Sheets --&gt;</font></font><font></font><font><font>
+  &lt;link rel="stylesheet" type="text/css" href="../../resources/css/leaflet.css" /&gt;</font></font><font></font><font><font>
+  &lt;link rel="stylesheet" href="../../resources/css/TangleKit.css" type="text/css"&gt;</font></font><font></font><font><font>
+    &lt;link rel="stylesheet" type="text/css" href="../../resources/css/jquery.dataTables.css" /&gt;  </font></font><font></font>
+<font></font><font><font>
+  &lt;!-- Javascript Includes --&gt;</font></font><font></font><font><font>
+  &lt;script type="text/javascript" src="../../resources/js/jquery-1.9.1.min.js"&gt;&lt;/script&gt;</font></font><font></font><font><font>
+  &lt;script type="text/javascript" src="../../resources/js/d3.v3.min.js"&gt;&lt;/script&gt;  </font></font><font></font><font><font>
+  &lt;script type="text/javascript" src="../../resources/js/leaflet.js"&gt;&lt;/script&gt;</font></font><font></font><font><font>
+  &lt;script type="text/javascript" src="../../resources/js/queue.v1.min.js"&gt; &lt;/ script&gt;,fr</font></font><font></font><font><font>
+  &lt;script type="text/javascript" src="../../resources/js/topojson.v1.min.js"&gt;&lt;/script&gt;</font></font><font></font><font><font>
+  &lt;script type="text/javascript" src="../../resources/js/colorbrewer.js"&gt;&lt;/script&gt;</font></font><font></font><font><font>
+  &lt;script type="text/javascript" src="../../resources/js/tangle.min.js"&gt;&lt;/script&gt;</font></font><font></font><font><font>
+  &lt;script type="text/javascript" src='../../resources/js/jquery.dataTables.min.js'&gt;&lt;/script&gt;</font></font><font></font><font><font>
+  &lt;script type="text/javascript" src='../../resources/js/TableTools.min.js'&gt;&lt;/script&gt;</font></font><font></font><font><font>
+  &lt;script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"&gt;&lt;/script&gt; </font></font><font></font>
+<font></font>
+<font></font><font><font>
+    &lt;script type="text/javascript" src="../../resources/src/symbol.js"&gt;&lt;/script&gt;</font></font><font></font>
+<font></font><font><font>
+  &lt;title&gt;Symbol Template&lt;/title&gt;</font></font><font></font><font><font>
+&lt;/head&gt;</font></font><font></font><font><font>
+&lt;body&gt;</font></font><font></font><font><font>
+  &lt;div style="width:901px;margin:0 auto;"&gt;</font></font><font></font><font><font>
+    &lt;div id="map" style="width:900px;height:600px;"&gt;&lt;/div&gt;</font></font><font></font><font><font>
+    &lt;div id="mode_select"&gt;&lt;/div&gt;</font></font><font></font><font><font>
+    &lt;div id="commodity_select"&gt;&lt;/div&gt;</font></font><font></font><font><font>
+    &lt;div id="orig_or_dest_select"&gt;&lt;/div&gt;</font></font><font></font><font><font>
+    &lt;div id="info"&gt;&lt;/div&gt;</font></font><font></font><font><font>
+    &lt;div id="legend"&gt;&lt;/div&gt;</font></font><font></font><font><font>
+    &lt;div id="data"&gt;&lt;/div&gt;</font></font><font></font><font><font>
+  &lt;/div&gt;</font></font><font></font>
+<font></font><font><font>
+&lt;script&gt;</font></font><font></font><font><font>
+$(function(){ // on page load</font></font><font></font>
+<font></font><font><font>
+  Mn =,sv</font></font><font></font><font><font>
+  symbol.settings.datasource = '/t2/data/get/getCountyOrigDestFlow.php';</font></font><font></font><font><font>
+  symbol.tableDatasource = '/t2/data/get/getSymChart.php';</font></font><font></font><font><font>
+  symbol.init(mn);</font></font><font></font><font><font>
+})</font></font><font></font><font><font>
+&lt;/script&gt;</font></font><font></font><font><font>
+&lt;/body&gt;</font></font><font></font><font><font>
+&lt;/html&gt;</font></font></code></pre>
+<h3 id="4"><font><font>symnbol.init(container,counties)</font></font></h3>
+<p><font><font>To create a blank symbol map, pass the list of counties you wish to be able to visualize.</font></font></p>
+<h3 id="5"><font><font>symbol.settings</font></font></h3>
+<p><font><font>Symbol settings is a JSON object which tells the map where to get data. The default values are :</font></font></p>
+<p><code><font><font>settings : {datasource:'',sctg : '00' , mode : '00' , orig_or_dest : 'dest_fips'}</font></font></code></p>
+<p><font><font>before initializing the maps you must at least set symbol.settings.datasource as in the example above.</font></font></p>
+<p><font><font>Each individual setting is passed in a POST request to the datasource url to specify what data it should return.See `data/get/getCountyOrigDestFlow.php' to see how its parsed.</font></font></p>
+<p><font><font>Additionally you will need a seperate datasource for the text tables. for this you must set symbol.tableDatasource. See `data/get/getSymChart.php' to see how its parsed.</font></font></p>
+<h5 id="6"><font><font>settings.datasource</font></font></h5>
+<p><font><font>The datasource is the URL of the page which provides data. If it remains unset the map will load blank. 
+example</font></font></p>
+<pre><code class="javascript"><font><font>symbol.settings.datasource = </font></font><span class="string"><font><font>'http://vis.availabs.org/t2/data/get/getCountyOrigDestFlow.php'</font></font></span><font><font>
+symbol.init(</font></font><span class="string"><font><font>'map'</font></font></span><font><font>);</font></font></code></pre>
+<p><font><font>Because all of the rest of the settings are default this will load a map of import flows for county 27137 (St Louis County Minnesota), for all commodities, for all modes of transportation. </font></font></p>
+<h5 id="7"><font><font>symbol.tableDatasource</font></font></h5>
+<p><font><font>Note, this is not part of settings but a variable belonging directly to the symbol object. The datasource is the URL of the page which provides data. If it remains unset the map will load blank. 
+example</font></font></p>
+<pre><code class="javascript"><font><font>...</font></font><font></font><font><font>
+symbol.tableDatasource = </font></font><span class="string"><font><font>'/t2/data/get/getSymChart.php'</font></font></span><font><font>;</font></font><font></font><font><font>
+symbol.init(mn)</font></font></code></pre>
+<p><font><font>Because all of the rest of the settings are default this will load a map of import flows for county 27137 (St Louis County Minnesota), for all commodities, for all modes of transportation. </font></font></p>
+<h5 id="8"><font><font>settings.sctg</font></font></h5>
+<p><font><font>sctg sets the commidty code that is queried for. Must be a two character string.</font></font></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right"><font><font>Value</font></font></th>
+<th style="text-align:left"><font><font>Meaning</font></font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right"><font><font>"00"</font></font></td>
+<td style="text-align:left"><font><font>All Commodities</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"01"</font></font></td>
+<td style="text-align:left"><font><font>Live animals/fish</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"02"</font></font></td>
+<td style="text-align:left"><font><font>Cereal grains</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"03"</font></font></td>
+<td style="text-align:left"><font><font>Other ag prods.</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"04"</font></font></td>
+<td style="text-align:left"><font><font>Animal feed</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"05"</font></font></td>
+<td style="text-align:left"><font><font>Meat/seafood</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"06"</font></font></td>
+<td style="text-align:left"><font><font>Milled grain prods.</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"07"</font></font></td>
+<td style="text-align:left"><font><font>Other foodstuffs</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"08"</font></font></td>
+<td style="text-align:left"><font><font>Alcoholic beverages</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"09"</font></font></td>
+<td style="text-align:left"><font><font>Tobacco prods.</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"10"</font></font></td>
+<td style="text-align:left"><font><font>Building stone</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"11"</font></font></td>
+<td style="text-align:left"><font><font>Natural sands</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"12"</font></font></td>
+<td style="text-align:left"><font><font>Gravel</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"13"</font></font></td>
+<td style="text-align:left"><font><font>Nonmetallic minerals</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"14"</font></font></td>
+<td style="text-align:left"><font><font>Metallic ores,ca</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"15"</font></font></td>
+<td style="text-align:left"><font><font>Coal</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"16"</font></font></td>
+<td style="text-align:left"><font><font>Crude petroleum</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"18"</font></font></td>
+<td style="text-align:left"><font><font>Gasoline</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"19"</font></font></td>
+<td style="text-align:left"><font><font>Fuel oils</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"20"</font></font></td>
+<td style="text-align:left"><font><font>Basic chemicals</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"21"</font></font></td>
+<td style="text-align:left"><font><font>Pharmaceuticals</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"22"</font></font></td>
+<td style="text-align:left"><font><font>Fertilizers</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"23"</font></font></td>
+<td style="text-align:left"><font><font>Chemical prods.</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"24"</font></font></td>
+<td style="text-align:left"><font><font>Plastics/rubber</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"25"</font></font></td>
+<td style="text-align:left"><font><font>Logs</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"26"</font></font></td>
+<td style="text-align:left"><font><font>Wood prods.</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"27"</font></font></td>
+<td style="text-align:left"><font><font>Newsprint/paper</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"28"</font></font></td>
+<td style="text-align:left"><font><font>Paper articles</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"29"</font></font></td>
+<td style="text-align:left"><font><font>Printed prods.</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"30"</font></font></td>
+<td style="text-align:left"><font><font>Textiles/leather</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"31"</font></font></td>
+<td style="text-align:left"><font><font>Nonmetal min. Nonmetal me. prods. prods.,eo</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"32"</font></font></td>
+<td style="text-align:left"><font><font>Base metals</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"33"</font></font></td>
+<td style="text-align:left"><font><font>Articles-base metal</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"34"</font></font></td>
+<td style="text-align:left"><font><font>Machinery</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"35"</font></font></td>
+<td style="text-align:left"><font><font>Electronics</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"36"</font></font></td>
+<td style="text-align:left"><font><font>Motorized vehicles</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"37"</font></font></td>
+<td style="text-align:left"><font><font>Transport equip.</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"38"</font></font></td>
+<td style="text-align:left"><font><font>Precision instruments</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"39"</font></font></td>
+<td style="text-align:left"><font><font>Furniture</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"40"</font></font></td>
+<td style="text-align:left"><font><font>Misc. mfg. prods.</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"41"</font></font></td>
+<td style="text-align:left"><font><font>Waste/scrap</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"43"</font></font></td>
+<td style="text-align:left"><font><font>Mixed freight</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"99"</font></font></td>
+<td style="text-align:left"><font><font>Unknown</font></font></td>
+</tr>
+</tbody>
+</table>
+<h5 id="9"><font><font>settings.mode</font></font></h5>
+<p><font><font>mode sets the mode of transportation that is queried for. </font></font></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right"><font><font>Value</font></font></th>
+<th style="text-align:left"><font><font>Meaning</font></font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right"><font><font>"00"</font></font></td>
+<td style="text-align:left"><font><font>All Modes</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"1"</font></font></td>
+<td style="text-align:left"><font><font>Truck</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"2"</font></font></td>
+<td style="text-align:left"><font><font>Rail</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"3"</font></font></td>
+<td style="text-align:left"><font><font>Water</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"5"</font></font></td>
+<td style="text-align:left"><font><font>Air</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"6"</font></font></td>
+<td style="text-align:left"><font><font>Pipeline</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"7"</font></font></td>
+<td style="text-align:left"><font><font>Other/Unkown</font></font></td>
+</tr>
+</tbody>
+</table>
+<h5 id="10"><font><font>settings.orig_or_dest</font></font></h5>
+<table>
+<thead>
+<tr>
+<th style="text-align:right"><font><font>Value</font></font></th>
+<th style="text-align:left"><font><font>Meaning</font></font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right"><font><font>"dest_fips"</font></font></td>
+<td style="text-align:left"><font><font>Import Flows</font></font></td>
+</tr>
+<tr>
+<td style="text-align:right"><font><font>"orig_fips"</font></font></td>
+<td style="text-align:left"><font><font>Export Flows</font></font></td>
+</tr>
+</tbody>
+</table>
+<h5 id="11"><font><font>settings.granularity</font></font></h5>
+<p><font><font> Granularity is the lowest value in for which a connection will be made between two counties on the map. It defaults 5 (the unit is thousands of tons). If you set it to 0, it will show all connections, but the map will load slower.</font></font></p>
+<h5 id="12"><font><font>Container Naming Conflicts</font></font></h5>
+<p><font><font>  As you can see in the example a number of aspects of the symbol map need their own div containers to be rendered onto the page. These are the default element ids that are used as containers:</font></font></p>
+<pre><code><font><font>  commoditySelectContainer:'commodity_select',</font></font><font></font><font><font>
+  modeSelectContainer:'mode_select',</font></font><font></font><font><font>
+  origOrDestSelectContainer:'orig_or_dest_select',</font></font><font></font><font><font>
+  flowTableContainer:'data',</font></font><font></font><font><font>
+  legend container: 'legend',nl</font></font><font></font><font><font>
+  mapContainer:'map',</font></font><font></font><font><font>
+  infoContainer:'info',</font></font></code></pre>
+<p><font><font> however if you have a naming conflict with one of these containers you can change the contianer name before calling symbol.init() by simply setting the property to a new container name for example</font></font></p>
+<pre><code class="javascript"><font><font>  symbol.legendContainer = </font></font><span class="string"><font><font>'legend-display'</font></font></span><font><font>;</font></font></code></pre>
+<p><font><font> The container names refer to the element ID and do not required the jquery style # selector. The matching element for this above example would look like this:</font></font></p>
+<pre><code class="html"><font><font>&lt;div id='legend-display'&gt;&lt;/div&gt;</font></font></code></pre>
+<h2 id="13"><font><font>Data Source Data Format</font></font></h2>
+<p><font><font>The symbol class accesses the data source with the following call:</font></font></p>
+<pre><code class="javascript"><font><font>        $.ajax({url:symbol.settings.datasource, </font></font><font></font><font><font>
+            type : </font></font><span class="string"><font><font>'POST'</font></font></span><font><font>,</font></font><font></font><font><font>
+            data:symbol.settings,</font></font><font></font><font><font>
+            dataType:</font></font><span class="string"><font><font>'json'</font></font></span><font><font>,</font></font><font></font><font><font>
+            async:</font></font><span class="literal"><font><font>false</font></font></span><font><font>
+        })</font></font></code></pre>
+<p><font><font>however this is done behind the scenes and this isn't required in setting up the maps.</font></font></p>
+<p><font><font>The data source must return a JSON object of the following format:</font></font></p>
+<pre><code class="json"><font><font>[</font></font><font></font><font><font>
+  {</font></font><font></font><font><font>
+    "</font></font><span class="attribute"><font><font>orig</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"27001"</font></font></span></span><font><font>,</font></font><font></font><font><font>
+    "</font></font><span class="attribute"><font><font>dest</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"27001"</font></font></span></span><font><font>,</font></font><font></font><font><font>
+    "</font></font><span class="attribute"><font><font>tons</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"100.21730166327356"</font></font></span><font><font>
+  }</font></font></span><font><font>,</font></font><font></font><font><font>
+  {</font></font><font></font><font><font>
+    "</font></font><span class="attribute"><font><font>orig</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"27001"</font></font></span></span><font><font>,</font></font><font></font><font><font>
+    "</font></font><span class="attribute"><font><font>dest</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"27003"</font></font></span></span><font><font>,</font></font><font></font><font><font>
+    "</font></font><span class="attribute"><font><font>tons</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"7.64786575049914"</font></font></span><font><font>
+  }</font></font></span><font><font>,</font></font><font></font><font><font>
+  ...</font></font><font></font><font><font>
+]</font></font></code></pre>
+<p><font><font> The distinct list of origins in the data must be equal to the counties input array passed to symbol.init(). For each origin the list of all destinations must be equal to the list of counties passed to symbol.init()</font></font></p>
+<h2 id="14"><font><font>Table Data Source Format</font></font></h2>
+<p><font><font>  This datasource takes the same input as the first data source for symbol maps with the addition of a fips code which is determing by a click event:</font></font></p>
+<pre><code class="javascript">  <span class="keyword"><font><font>was</font></font></span><font><font> data settings = symbol.settings;,no</font></font><font></font><font><font>
+  dataSettings.fips = fips;,no</font></font></code></pre>
+<p><font><font>  The data output should be all of the origins or destinations for that fips code based on the settings</font></font></p>
+<pre><code class="json"><font><font>  [</font></font><font></font><font><font>
+    {</font></font><font></font><font><font>
+      "</font></font><span class="attribute"><font><font>fips</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"27137"</font></font></span></span><font><font>,</font></font><font></font><font><font>
+      "</font></font><span class="attribute"><font><font>tons</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"710.5506406377215"</font></font></span><font><font>
+    }</font></font></span><font><font>,</font></font><font></font><font><font>
+    { </font></font><font></font><font><font>
+      "</font></font><span class="attribute"><font><font>fips</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"27017"</font></font></span></span><font><font>,</font></font><font></font><font><font>
+      "</font></font><span class="attribute"><font><font>tons</font></font></span><font><font>":</font></font><span class="value"><span class="string"><font><font>"365.3212150798759"</font></font></span><font><font>
+    }</font></font></span><font><font>,</font></font><font></font><font><font>
+    ...</font></font><font></font><font><font>
+  ]</font></font></code></pre>
+<h2 id="15"><font><font>Data Processing</font></font></h2>
+<p><font><font> While any data which is returned in the above format will work for generating symbol maps, here is the approach that we took in processing the data that was sent to us for these projects. All sql code has been tested on MySQL mysql Ver 14.14 Distrib 5.5.34 &amp; Ver 14.14 Distrib 5.5.29.</font></font></p>
+<h5 id="16"><font><font>1 - Create a table for the state data.</font></font></h5>
+<pre><code class="sql"><font></font><font><font>
+delimiter $$</font></font><font></font>
+<span class="operator"><span class="keyword"><font><font>CREATE</font></font></span> <span class="keyword"><font><font>TABLE</font></font></span> <span class="string"><font><font>`tbl_maine_domestic_db`</font></font></span><font><font> (
+  </font></font><span class="string"><font><font>`dms_orig`</font></font></span> <span class="keyword"><font><font>varchar</font></font></span><font><font>(</font></font><span class="number"><font><font>45</font></font></span><font><font>) </font></font><span class="keyword"><font><font>DEFAULT</font></font></span> <span class="keyword"><font><font>NULL</font></font></span><font><font>,
+  </font></font><span class="string"><font><font>`dms_orig_fips`</font></font></span> <span class="keyword"><font><font>varchar</font></font></span><font><font>(</font></font><span class="number"><font><font>45</font></font></span><font><font>) </font></font><span class="keyword"><font><font>DEFAULT</font></font></span> <span class="keyword"><font><font>NULL</font></font></span><font><font>,
+  </font></font><span class="string"><font><font>`dms_dest`</font></font></span> <span class="keyword"><font><font>varchar</font></font></span><font><font>(</font></font><span class="number"><font><font>45</font></font></span><font><font>) </font></font><span class="keyword"><font><font>DEFAULT</font></font></span> <span class="keyword"><font><font>NULL</font></font></span><font><font>,
+  </font></font><span class="string"><font><font>`dms_dest_fips`</font></font></span> <span class="keyword"><font><font>varchar</font></font></span><font><font>(</font></font><span class="number"><font><font>45</font></font></span><font><font>) </font></font><span class="keyword"><font><font>DEFAULT</font></font></span> <span class="keyword"><font><font>NULL</font></font></span><font><font>,
+   </font></font><span class="string"><font><font>`dms_mode`</font></font></span> <span class="keyword"><font><font>varchar</font></font></span><font><font>(</font></font><span class="number"><font><font>45</font></font></span><font><font>) </font></font><span class="keyword"><font><font>DEFAULT</font></font></span> <span class="keyword"><font><font>NULL</font></font></span><font><font>,
+  </font></font><span class="string"><font><font>`sctg2`</font></font></span> <span class="keyword"><font><font>varchar</font></font></span><font><font>(</font></font><span class="number"><font><font>45</font></font></span><font><font>) </font></font><span class="keyword"><font><font>DEFAULT</font></font></span> <span class="keyword"><font><font>NULL</font></font></span><font><font>,
+  </font></font><span class="string"><font><font>`value_2010`</font></font></span> <span class="keyword"><font><font>float</font></font></span> <span class="keyword"><font><font>DEFAULT</font></font></span> <span class="keyword"><font><font>NULL</font></font></span><font><font>,
+  </font></font><span class="string"><font><font>`curval_2010`</font></font></span> <span class="keyword"><font><font>float</font></font></span> <span class="keyword"><font><font>DEFAULT</font></font></span> <span class="keyword"><font><font>NULL</font></font></span><font><font>,
+  </font></font><span class="string"><font><font>`tons_2010`</font></font></span> <span class="keyword"><font><font>float</font></font></span> <span class="keyword"><font><font>DEFAULT</font></font></span> <span class="keyword"><font><font>NULL</font></font></span><font><font>,
+  </font></font><span class="keyword"><font><font>KEY</font></font></span> <span class="string"><font><font>`orig`</font></font></span><font><font> (</font></font><span class="string"><font><font>`dms_orig_fips`</font></font></span><font><font>),
+  </font></font><span class="keyword"><font><font>KEY</font></font></span> <span class="string"><font><font>`dest`</font></font></span><font><font> (</font></font><span class="string"><font><font>`dms_dest_fips`</font></font></span><font><font>),
+  </font></font><span class="keyword"><font><font>KEY</font></font></span> <span class="string"><font><font>`orig-dest`</font></font></span><font><font> (</font></font><span class="string"><font><font>`dms_dest_fips`</font></font></span><font><font>,</font></font><span class="string"><font><font>`dms_orig_fips`</font></font></span><font><font>),
+  </font></font><span class="keyword"><font><font>KEY</font></font></span> <span class="string"><font><font>`mode`</font></font></span><font><font> (</font></font><span class="string"><font><font>`dms_mode`</font></font></span><font><font>),
+  </font></font><span class="keyword"><font><font>KEY</font></font></span> <span class="string"><font><font>`scgt`</font></font></span><font><font> (</font></font><span class="string"><font><font>`sctg2`</font></font></span><font><font>)</font></font><font></font><font><font>
+) ENGINE=InnoDB </font></font><span class="keyword"><font><font>DEFAULT</font></font></span><font><font> CHARSET=utf8$$</font></font></span></code></pre>
+<h5 id="17"><font><font>2 - Import from CSV using mysqlimport (command line)</font></font></h5>
+<pre><code class="BASH"><font><font>mysqlimport  --ignore-lines=1 --fields-terminated-by=, --fields-enclosed-by=\" --columns='dms_orig,dms_orig_fips,dms_dest,dms_dest_fips,dms_mode,sctg2,value_2010,curval_2010,tons_2010' --local -u root -p tredis tbl_maine_domestic_db.csv\</font></font></code></pre>
+<p><font><font>note, the name of the file you are importing MUST be the same as the name of the table you created in step one.</font></font></p>
+<h5 id="18"><font><font>3 - Create Summary Tables</font></font></h5>
+<p><font><font>  Symbol maps havet the potential to run on any possible combination of counties and depending on that list the dataset can be quite large. Becuase these tables can have sources across state lines but also have a limited number of destinations compared to the total number of destinations in a state summary table we suggest creating a custom table for each symbol map you want to display. To do that create a table with the same format as in step one and then run the following query for each state that has counties being dispalyed in the county list.</font></font></p>
+<pre><code><font><font>$sql ="insert into `custom_symbol_table` select dms_orig_fips,dms_dest_fips,dms_mode,sctg2,curval_2010,tons_2010 from state_table where dms_orig_fips in ('27001','55123') or dms_dest_fips in ('27001','55123')";</font></font></code></pre>
+<p><font><font>  In the example above the county list is only 2 counties and would have to be run twice one for MN(27) and one for WI(55). </font></font></p>
+<h2 id="19"><font><font>Serving the Data</font></font></h2>
+<p><font><font>   The script used to serve the data recieves all of the variable in symbol settings as POST variables and uses them to query for the correct commodity, mode and flow direction. See data/get/getCountyOrigDestFlow.php.php for our php code. This being under 50 lines of code should be easy to translate into your server side language of choice</font></font></p>
+</div><div id="markdown-outline" style="left: 1096px; overflow-y: auto; max-height: 296px;"><ul><li><a href="#0"><font><font>EDR Commodity Flow Visualizations</font></font></a></li><ul><li><a href="#1"><font><font>Symbol Maps</font></font></a></li><ul><li><a href="#2"><font><font>Dependencies</font></font></a></li></ul><li><a href="#3"><font><font>Gettings Started</font></font></a></li><ul><li><a href="#4"><font><font>symnbol.init(container,counties)</font></font></a></li><li><a href="#5"><font><font>symbol.settings</font></font></a></li><ul><ul><li><a href="#6"><font><font>settings.datasource</font></font></a></li><li><a href="#7"><font><font>symbol.tableDatasource</font></font></a></li><li><a href="#8"><font><font>settings.sctg</font></font></a></li><li><a href="#9"><font><font>settings.mode</font></font></a></li><li><a href="#10"><font><font>settings.orig_or_dest</font></font></a></li><li><a href="#11"><font><font>settings.granularity</font></font></a></li><li><a href="#12"><font><font>Container Naming Conflicts</font></font></a></li></ul></ul></ul><li><a href="#13"><font><font>Data Source Data Format</font></font></a></li><li><a href="#14"><font><font>Table Data Source Format</font></font></a></li><li><a href="#15"><font><font>Data Processing</font></font></a></li><ul><ul><ul><li><a href="#16"><font><font>1 - Create a table for the state data.</font></font></a></li><li><a href="#17"><font><font>2 - Import from CSV using mysqlimport (command line)</font></font></a></li><li><a href="#18"><font><font>3 - Create Summary Tables</font></font></a></li></ul></ul></ul><li><a href="#19"><font><font>Serving the Data</font></font></a></li></ul></ul></div></div><div id="goog-gt-tt" class="skiptranslate" dir="ltr"><div style="padding: 8px;"><div><div class="logo"><img src="https://www.google.com/images/icons/product/translate-32.png" width="20" height="20"></div></div></div><div class="top" style="padding: 8px; float: left; width: 100%;"><h1 class="title gray">Original text</h1></div><div class="middle" style="padding: 8px;"><div class="original-text"></div></div><div class="bottom" style="padding: 8px;"><div class="activity-links"><span class="activity-link">Contribute a better translation</span><span class="activity-link"></span></div><div class="started-activity-container"><hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;"><div class="activity-root"></div></div></div><div class="status-message" style="display: none;"></div></div><div id="markdown-buttons-container"><div id="markdown-backTop" onclick="window.scrollTo(0,0);"></div><div id="markdown-raw" onclick="window.location='view-source:' + window.location.href;"></div><div id="markdown-bottom" onclick="window.scrollTo(0, document.body.scrollHeight);"></div></div></body></html>

@@ -169,6 +169,15 @@ var symbol = {
 					.range(symbol.numRange);
 
 			symbol.setLegend();
+			if(!is_empty(symbol.veronoi)){
+				symbol.g_cells.selectAll("path.arc")
+					.transition().duration(500)
+					.attr("stroke-width", function(d){
+		      		var output = symbol.linequantize(d.tons);
+			        if(isNaN(output)) {return 1;}
+			        else{return output;}
+		        })
+			}
 			loader.run();
 	     
 		})
@@ -360,9 +369,6 @@ var symbol = {
 	},
 	drawCentroids: function(){
 		
-		if(!is_empty(symbol.veronoi)){
-			symbol.g_cells.selectAll("path.arc").remove();
-		}
 
 		symbol.g.selectAll("circle").remove();
 
@@ -435,22 +441,6 @@ var symbol = {
 		        var county = d3.selectAll(".county_"+d.id);
 		        county.attr("class","county_"+d.id+" lines");//add lines to county class
 		      
-
-
-		      //   symbol.g_cells.selectAll("path.arc").remove();
-		      //   console.log(symbol.g_cells.selectAll("path.arc"));
-
-		      //   symbol.g_cells.selectAll("path.arc")
-		      //   	.data(symbol.linksByOrigin[d.id])
-		      //   	.enter().append("svg:path")
-		      //   	.attr("class", function(d){
-		      //   		return "arc somethingelse";
-		      //   	})
-		      //   	//.attr("shape-rendering","crispEdges")
-		     	// 	.attr("d", function(d) {
-		      // 			//console.log(d,)
-		      // 			return symbol.path(symbol.arc(d)); 
-			    	// });
 
 		    });
 
